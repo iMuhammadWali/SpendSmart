@@ -8,7 +8,7 @@ const OnboardingScreen = () =>{
 
     const handleButtonPress = () =>{
         ToastAndroid.show("Button Pressed", ToastAndroid.SHORT);
-        navigator.replace("Home");
+        navigator.navigate("HomeTabs");
     }
 
     return (
@@ -64,13 +64,14 @@ const styles = StyleSheet.create({
         height: 50,
         justifyContent: "center",
         alignItems: "center",
-        borderRadius: 20
+        borderRadius: 10
     },
     pressedGetStartedButton:{
         backgroundColor: "#ff7e7e",
     },
     getStartedButtonText:{
         color: "#fff",
+        color: "#000",
         fontFamily: "Poppins_600SemiBold"    
     }
 });
