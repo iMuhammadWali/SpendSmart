@@ -21,42 +21,6 @@ const HomeSreen = () =>{
     }, []);
 
 
-    const recentTransactions = [
-        {
-            id: "1",
-            title: "Bike petrol",
-            category: "travel",
-            description: "Put fuel in Wali's bike to go to Hussain Chowk and stuff",
-            amount: 230,
-            date: Date.now()
-        },
-        {
-            id: "2",
-            title: "Pathooray",
-            category: "food",
-            description: "We were hungry so ate Pathooray and jalebi from Sadar",
-            amount: 270,
-            date: Date.now()
-        },
-        {
-            id: "3",
-            title: "Bought Fry Pan",
-            category: "other",
-            description: "Bought Wali's chappal from Bata",
-            amount: 3200,
-            date: Date.now()
-        },
-        {
-            id: "4",
-            title: "Bought Medicine",
-            category: "health",
-            description: "Wali took 1000 from me and bougth medicine worth 600 Rs",
-            amount: 600,
-            date: Date.now()
-        }
-    ]
-
-
     const categoryConfig = {
         food:     { icon: "fast-food-outline",     bg: "#FCEEF1", color: "#C95668"},
         travel:   { icon: "car-outline",           bg: "#EFF6FF", color: "#3B82F6" },
