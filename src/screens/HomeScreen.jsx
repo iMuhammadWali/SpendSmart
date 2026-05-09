@@ -1,23 +1,30 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 // TODO: After completing the design, Ask AI to put all the styling in the styles object.
 
 import {Ionicons} from "@expo/vector-icons"
+import { getAllExpenses, loadDummyExpenses } from "../database/db";
 
 const HomeSreen = () =>{
     const [month, setMonth] = useState("");
-    const [totalSpent, setTotalSpent] = useState("18,450");
+    const [totalSpent, setTotalSpent] = useState(0);
     const [remaining, setRemaining] = useState("6,550");
-
+    const [recentTransactions, setRecentTransactions] = useState([]);
+    
     useEffect(()=>{
-        // Set the month here.
-        const date = new Date();
-        const monthName = date.toLocaleString('default', { month: 'short' });
-        setMonth(monthName);
+        const load = async () => {
+            const date = new Date();
+            const monthName = date.toLocaleString('default', { month: 'short' });
+            setMonth(monthName);
 
-        const total = recentTransactions.reduce((sum, item) => sum + item.amount, 0);
-        setTotalSpent(total);
+            const result = await getAllExpenses();
+            setRecentTransactions(result);
+
+            const total = recentTransactions.reduce((sum, item) => sum + item.amount, 0);
+            setTotalSpent(total);
+        }
+        load();
     }, []);
 
 
@@ -54,7 +61,7 @@ const HomeSreen = () =>{
                 shadowRadius: 8,            
             }}>
 
-                {/* Icon Box */}
+                {/* Icon */}
                 <View style={{
                     width: 55,
                     height: 55,
@@ -65,7 +72,7 @@ const HomeSreen = () =>{
                     <Ionicons name={config.icon} size={20} color={config.color} />
                 </View>
 
-                {/* Title + Category Pill */}
+                {/* Title and Category */}
                 <View style={{ flex: 1, gap: 5 }}>
                     <Text style={{
                         fontFamily: "Poppins_500Medium",
@@ -86,7 +93,7 @@ const HomeSreen = () =>{
 
                 </View>
 
-                {/* Amount + Time */}
+                {/* Amount and Time */}
                 <View style={{gap: 3 }}>
                     <Text style={{
                         fontFamily: "Poppins_700Bold",
@@ -107,7 +114,6 @@ const HomeSreen = () =>{
                         })}
                     </Text>
                 </View>
-
             </View>
         );
     };
@@ -155,7 +161,7 @@ const HomeSreen = () =>{
                 <FlatList
                     data={recentTransactions}
                     renderItem={TransactionItem}
-                    keyExtractor={(item)=>{return item.id}}
+                    keyExtractor={(item)=>{return item.id.toString()}}
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={{paddingBottom: 10, marginTop: 5}}>
                 </FlatList>

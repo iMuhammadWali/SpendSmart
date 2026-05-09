@@ -8,10 +8,11 @@ import useAppFonts from './src/hooks/useAppFonts';
 
 import {Ionicons} from "@expo/vector-icons"
 
-
 import OnboardingScreen from './src/screens/OnboardingScreen';
 import HomeSreen from './src/screens/HomeScreen';
 import AddEntryScreen from './src/screens/AddEntryScreen';
+import { useEffect, useState } from 'react';
+import { initDatabase, loadDummyExpenses } from './src/database/db';
 
 // For now I will code the navigation in the app.js and will export it later to a different file or maybe create a different folder for it later.
 const Stack = createNativeStackNavigator();
@@ -76,6 +77,18 @@ const RootStack = () => {
   )
 }
 export default function App() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(()=>{
+    const load = async () => {
+      setIsLoading(true);
+      await initDatabase();
+      await loadDummyExpenses();
+      setIsLoading(false);
+    }
+    load();
+  }, []);
+
   const fontsLoaded = useAppFonts();
   if (!fontsLoaded) 
     return (

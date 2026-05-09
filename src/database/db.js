@@ -1,24 +1,33 @@
-import  * as SQLite from 'expo-sqlite'
+import  * as SQLite from 'expo-sqlite';
+import { ToastAndroid } from 'react-native';
 
-const db = await SQLite.openDatabaseAsync("spendSmart.db");
-
+let db;
 // The documentation said that exec function does not escape parameters and it prune to SQL injection
 // but since they used it anyhow, I am also gonna use it.
-db.execSync(`
-  CREATE TABLE IF NOT EXISTS expenses (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title,
-    amount INTEGER,
-    category TEXT,
-    description TEXT,
-    createdAt TEXT
-  );
-`);
+export const initDatabase = async () =>{
+    db = await SQLite.openDatabaseAsync("spendSmart.db");
+    db.execSync(`
+        CREATE TABLE IF NOT EXISTS expenses (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT,
+        amount INTEGER,
+        category TEXT,
+        description TEXT,
+        createdAt TEXT
+        );`
+    );
+}
 
+export async function loadDummyExpenses() {
+    const existing = await db.getAllAsync(
+        'SELECT COUNT(*) as count FROM expenses'
+    );
+    // existing is an array [{"count": 4}]
+    // console.log(existing);
+    if (existing[0].count > 0) return;
 
-const expenses = [
+    const expenses = [
         {
-            id: "1",
             title: "Bike petrol",
             category: "travel",
             description: "Put fuel in Wali's bike to go to Hussain Chowk and stuff",
@@ -26,7 +35,6 @@ const expenses = [
             date: Date.now()
         },
         {
-            id: "2",
             title: "Pathooray",
             category: "food",
             description: "We were hungry so ate Pathooray and jalebi from Sadar",
@@ -34,7 +42,6 @@ const expenses = [
             date: Date.now()
         },
         {
-            id: "3",
             title: "Bought Fry Pan",
             category: "other",
             description: "Bought Wali's chappal from Bata",
@@ -42,29 +49,42 @@ const expenses = [
             date: Date.now()
         },
         {
-            id: "4",
             title: "Bought Medicine",
             category: "health",
             description: "Wali took 1000 from me and bougth medicine worth 600 Rs",
             amount: 600,
             date: Date.now()
         }
-]
+    ];
 
-for (const e of expenses) {
-  await insertExpense(e);
+    for (const e of expenses) {
+        await insertExpense(e);
+    }
 }
+
 export async function insertExpense(e){
     // I can also use a preparedStatement.
     const {title, category, description, amount} = e;
     const result = await db.runAsync('INSERT INTO expenses (title, amount, category, description, createdAt) VALUES (?, ?, ?, ?, ?)', [title, amount, category, description, new Date().toISOString()]);
 
-    return result; // This will be an object.
+    return result;
 }
 
 export async function getAllExpenses() {
+    ToastAndroid.show("getAllExpenses entered", ToastAndroid.SHORT);
+
+    if (!db) {
+        ToastAndroid.show("DB not initialized", ToastAndroid.SHORT);
+        return [];
+    }
+
     const allRows = await db.getAllAsync('SELECT * FROM expenses');
+
+    ToastAndroid.show(`Size: ${allRows.length}`, ToastAndroid.SHORT);
+
     for (const row of allRows) {
         console.log(row.id, row.title, row.amount);
     }
+
+    return allRows;
 }
