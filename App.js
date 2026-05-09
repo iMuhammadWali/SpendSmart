@@ -6,6 +6,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import useAppFonts from './src/hooks/useAppFonts';
 
+import {Ionicons} from "@expo/vector-icons"
+
+
 import OnboardingScreen from './src/screens/OnboardingScreen';
 import HomeSreen from './src/screens/HomeScreen';
 import AddEntryScreen from './src/screens/AddEntryScreen';
@@ -22,12 +25,43 @@ const HomeTabs = () => {
         tabBarActiveTintColor: '#f8a4a4', 
         tabBarInactiveTintColor: '#8e8e8e',
         tabBarStyle:{
-          borderTopWidth: 0,
+          paddingTop: 5,
           elevation: 10, 
-        }
+          backgroundColor: '#fffbf7',
+          borderTopWidth: 1,
+          borderTopColor: '#EDE5DA',
+        },
       }}>
-      <Tab.Screen name='Home' component={HomeSreen} />    
-      <Tab.Screen name='AddEntry' component={AddEntryScreen} />
+      <Tab.Screen 
+        name='Home' 
+        component={HomeSreen} 
+        options={{
+          tabBarIcon: ({color, size}) => (<Ionicons name="home-outline" size={size} color={color} />)
+        }}/>
+        <Tab.Screen 
+        name='History' 
+        component={HomeSreen} 
+        options={{
+          tabBarIcon: ({color, size}) => (<Ionicons name="time-outline" size={size} color={color} />)
+        }}/>   
+      <Tab.Screen 
+        name='AddEntry' 
+        component={AddEntryScreen} 
+          options={{
+          tabBarIcon: ({color, size}) => (<Ionicons name="add-outline" size={size} color={color} />)
+        }}/>      
+        <Tab.Screen 
+        name='Analytics' 
+        component={HomeSreen} 
+        options={{
+          tabBarIcon: ({color, size}) => (<Ionicons name="bar-chart-outline" size={size} color={color} />)
+        }}/>        
+        <Tab.Screen 
+        name='Settings' 
+        component={HomeSreen} 
+        options={{
+          tabBarIcon: ({color, size}) => (<Ionicons name="settings-outline" size={size} color={color} />)
+        }}/>   
     </Tab.Navigator>
   );
 }
