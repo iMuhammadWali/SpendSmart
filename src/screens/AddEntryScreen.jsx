@@ -1,6 +1,7 @@
 import { StyleSheet, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+// Obhai I am super tired. Why is this so hard.
 const AddEntryScreen = () =>{
     return (
         <SafeAreaView style={styles.container}>

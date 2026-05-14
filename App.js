@@ -13,6 +13,7 @@ import HomeSreen from './src/screens/HomeScreen';
 import AddEntryScreen from './src/screens/AddEntryScreen';
 import { useEffect, useState } from 'react';
 import { initDatabase, loadDummyExpenses } from './src/database/db';
+import AIScreen from './src/screens/AIScreen';
 
 // For now I will code the navigation in the app.js and will export it later to a different file or maybe create a different folder for it later.
 const Stack = createNativeStackNavigator();
@@ -53,7 +54,7 @@ const HomeTabs = () => {
         }}/>      
         <Tab.Screen 
         name='Analytics' 
-        component={HomeSreen} 
+        component={AIScreen} 
         options={{
           tabBarIcon: ({color, size}) => (<Ionicons name="bar-chart-outline" size={size} color={color} />)
         }}/>        

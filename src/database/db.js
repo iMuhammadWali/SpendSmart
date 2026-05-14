@@ -71,8 +71,6 @@ export async function insertExpense(e){
 }
 
 export async function getAllExpenses() {
-    ToastAndroid.show("getAllExpenses entered", ToastAndroid.SHORT);
-
     if (!db) {
         ToastAndroid.show("DB not initialized", ToastAndroid.SHORT);
         return [];
@@ -80,11 +78,7 @@ export async function getAllExpenses() {
 
     const allRows = await db.getAllAsync('SELECT * FROM expenses');
 
-    ToastAndroid.show(`Size: ${allRows.length}`, ToastAndroid.SHORT);
-
-    for (const row of allRows) {
-        console.log(row.id, row.title, row.amount);
-    }
+    // console.log(allRows);
 
     return allRows;
 }
