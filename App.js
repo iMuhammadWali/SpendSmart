@@ -14,6 +14,7 @@ import AddEntryScreen from './src/screens/AddEntryScreen';
 import { useEffect, useState } from 'react';
 import { initDatabase, loadDummyExpenses } from './src/database/db';
 import AIScreen from './src/screens/AIScreen';
+import HistoryScreen from './src/screens/HistoryScreen';
 
 // For now I will code the navigation in the app.js and will export it later to a different file or maybe create a different folder for it later.
 const Stack = createNativeStackNavigator();
@@ -23,7 +24,6 @@ const HomeTabs = () => {
   return (
     <Tab.Navigator 
       screenOptions={{ 
-        headerShown: false,
         tabBarActiveTintColor: '#f8a4a4', 
         tabBarInactiveTintColor: '#8e8e8e',
         tabBarStyle:{
@@ -34,15 +34,17 @@ const HomeTabs = () => {
           borderTopColor: '#EDE5DA',
         },
       }}>
+        {/* Have to see how to add a back button here. */}
       <Tab.Screen 
         name='Home' 
         component={HomeSreen} 
         options={{
+          headerShown: false,
           tabBarIcon: ({color, size}) => (<Ionicons name="home-outline" size={size} color={color} />)
         }}/>
         <Tab.Screen 
         name='History' 
-        component={HomeSreen} 
+        component={HistoryScreen} 
         options={{
           tabBarIcon: ({color, size}) => (<Ionicons name="time-outline" size={size} color={color} />)
         }}/>   
@@ -50,12 +52,15 @@ const HomeTabs = () => {
         name='AddEntry' 
         component={AddEntryScreen} 
           options={{
-          tabBarIcon: ({color, size}) => (<Ionicons name="add-outline" size={size} color={color} />)
+            title: 'Add New Entry',
+            tabBarLabel: 'Add Entry', 
+            tabBarIcon: ({color, size}) => (<Ionicons name="add-outline" size={size} color={color} />)
         }}/>      
         <Tab.Screen 
         name='Analytics' 
         component={AIScreen} 
         options={{
+          headerShown: false,
           tabBarIcon: ({color, size}) => (<Ionicons name="bar-chart-outline" size={size} color={color} />)
         }}/>        
         <Tab.Screen 
