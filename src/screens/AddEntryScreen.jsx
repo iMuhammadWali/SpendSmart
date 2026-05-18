@@ -8,10 +8,12 @@ import {
   KeyboardAvoidingView,
   ScrollView,
   Platform,
+  ToastAndroid,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import Header from "../components/Header";
+import { insertExpense } from "../database/db";
 
 const AddEntryScreen = () => {
   const [selectedOptionIndex, setSelectedOptionIndex] = useState(0);
@@ -23,6 +25,12 @@ const AddEntryScreen = () => {
 
   const options = ["Manual", "Scan"];
   const categories = ["Food", "Transport", "Health", "Cloth"];
+
+  const saveExpense = async (expense) => {
+    await insertExpense(expense);
+    ToastAndroid.show("Expense Inserted", ToastAndroid.SHORT);
+    console.log("HI BUDDY");
+  }
 
   return (
     <SafeAreaView
@@ -198,11 +206,11 @@ const AddEntryScreen = () => {
                   borderWidth: 0,
                   color: "#c0404a",
                 }}
-                value={description}
+                value={title}
                 placeholder="Enter the title of your expense"
                 placeholderTextColor={"#e8909a"}
                 cursorColor={"#ff6b7a"}
-                onChangeText={setDescription}
+                onChangeText={setTitle}
               />
 
               <Text
@@ -229,12 +237,39 @@ const AddEntryScreen = () => {
                   borderWidth: 0,
                   color: "#c0404a",
                 }}
-                value={title}
+                value={description}
                 placeholder="Enter the description of your expense"
                 placeholderTextColor={"#e8909a"}
                 cursorColor={"#ff6b7a"}
-                onChangeText={setTitle}
+                onChangeText={setDescription}
               />
+              <Pressable
+                style={({ pressed }) => {
+                  return [
+                    {
+                      marginTop: 50,
+                      backgroundColor: "#ff9999",
+                      width: "100%",
+                      height: 50,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      borderRadius: 10,
+                    },
+                    ,
+                    pressed && { backgroundColor: "#ff7e7e" },
+                  ];
+                }}
+                onPress={() => {saveExpense({title, selectedCategory, description, amount})}}
+              >
+                <Text
+                  style={{
+                    color: "#fff",
+                    fontFamily: "Poppins_600SemiBold",
+                  }}
+                >
+                  Save Expense
+                </Text>
+              </Pressable>
             </View>
           ) : (
             <Text style={{ marginTop: 30 }}>Camera feature Coming soon</Text>
@@ -244,6 +279,7 @@ const AddEntryScreen = () => {
     </SafeAreaView>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

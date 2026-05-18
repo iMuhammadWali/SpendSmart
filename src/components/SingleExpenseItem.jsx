@@ -85,6 +85,7 @@ const SingleExpenseItem = ({ item }) => {
                 </Text>
             </View>
         </View>
+        
     );
 };
 

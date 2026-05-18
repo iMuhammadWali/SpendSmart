@@ -32,28 +32,24 @@ export async function loadDummyExpenses() {
             category: "travel",
             description: "Put fuel in Wali's bike to go to Hussain Chowk and stuff",
             amount: 230,
-            date: Date.now()
         },
         {
             title: "Pathooray",
             category: "food",
             description: "We were hungry so ate Pathooray and jalebi from Sadar",
             amount: 270,
-            date: Date.now()
         },
         {
             title: "Bought Fry Pan",
             category: "other",
             description: "Bought Wali's chappal from Bata",
             amount: 3200,
-            date: Date.now()
         },
         {
             title: "Bought Medicine",
             category: "health",
             description: "Wali took 1000 from me and bougth medicine worth 600 Rs",
             amount: 600,
-            date: Date.now()
         }
     ];
 
@@ -64,6 +60,7 @@ export async function loadDummyExpenses() {
 
 export async function insertExpense(e){
     // I can also use a preparedStatement.
+    console.log("we are here");
     const {title, category, description, amount} = e;
     const result = await db.runAsync('INSERT INTO expenses (title, amount, category, description, createdAt) VALUES (?, ?, ?, ?, ?)', [title, amount, category, description, new Date().toISOString()]);
 
