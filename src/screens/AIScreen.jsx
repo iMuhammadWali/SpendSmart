@@ -10,6 +10,7 @@ import {
   ActivityIndicator,
   ScrollView,
 } from "react-native";
+
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAvoidingView } from "react-native";
 
@@ -17,6 +18,9 @@ import { KeyboardAvoidingView } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import { Ionicons } from "@expo/vector-icons";
 import Markdown from "react-native-markdown-display";
+
+
+const OPEN_ROUTER_API_KEY = process.env.EXPO_PUBLIC_OPEN_ROUTER_API_KEY;
 
 const AIScreen = () => {
   const [prompt, setPrompt] = useState("");
@@ -40,6 +44,7 @@ const AIScreen = () => {
   };
 
   const handleButtonPress = async () => {
+    console.log(OPEN_ROUTER_API_KEY);
     if (isLoading) return;
     setHistory((prev) => [...prev, { role: "user", content: prompt }]);
     setIsLoading(true);
@@ -54,7 +59,7 @@ const AIScreen = () => {
           method: "POST",
           headers: {
             Authorization:
-              "Bearer sk-or-v1-",
+              `Bearer ${OPEN_ROUTER_API_KEY}`,
             "Content-Type": "application/json",
             "HTTP-Referer": "http://localhost",
             "X-OpenRouter-Title": "SpendSmart",
@@ -145,8 +150,8 @@ const AIScreen = () => {
       console.log(aiResponse);
       setIsLoading(false);
     } catch (err) {
-        //TODO: Handle error gracefully.
-        console.log(err);
+      //TODO: Handle error gracefully.
+      console.log(err);
     }
   };
 
