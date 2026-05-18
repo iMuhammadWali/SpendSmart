@@ -1,104 +1,247 @@
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+import Header from "../components/Header";
 
 const AddEntryScreen = () => {
   const [selectedOptionIndex, setSelectedOptionIndex] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState("Food");
 
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [amount, setAmount] = useState(0);
+
   const options = ["Manual", "Scan"];
   const categories = ["Food", "Transport", "Health", "Cloth"];
 
   return (
-    <View style={styles.container}>
-      <View
-        style={{
-          flexDirection: "row",
-          height: 50,
-          gap: 30,
-          paddingHorizontal: 30,
-          marginTop: 20,
-        }}
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: "#fdf7f0", paddingHorizontal: 20 }}
+      edges={["top"]}
+    >
+      <Header headerTitle="Add New Entry" />
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        // behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior="padding"
       >
-        {options.map((option, index) => (
-          <Pressable
-            key={index}
-            onPress={() => {
-              setSelectedOptionIndex(index);
+        <ScrollView
+          contentContainerStyle={{ paddingBottom: 40 }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              height: 50,
+              gap: 30,
+              marginTop: 20,
             }}
-            style={
-              selectedOptionIndex === index
-                ? {
-                    flex: 1,
-                    backgroundColor: "#ff9999",
-                    borderRadius: 10,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    shadowColor: "#fb4a4a",
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.3,
-                    shadowRadius: 8,
-                    elevation: 4,
-                  }
-                : {
-                    flex: 1,
-                    backgroundColor: "#fff",
-                    borderRadius: 10,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    shadowColor: "#d4d4d4",
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.05,
-                    shadowRadius: 4,
-                    elevation: 2,
-                  }
-            }
           >
-            <Text
-              style={
-                selectedOptionIndex === index
-                  ? { color: "#fff", fontFamily: "Poppins_600SemiBold" }
-                  : { color: "#595959", fontFamily: "Poppins_600SemiBold" }
-              }
-            >
-              {option}
-            </Text>
-          </Pressable>
-        ))}
-      </View>
-      <View
-        style={{
-          flexDirection: "row",
-          flexWrap: "wrap",
-          width: "100%",
-          gap: 10,
-          paddingHorizontal: 30,
-          marginTop: 30,
-        }}
-      >
-        {categories.map((category, index) => (
-          <Pressable
-            key={index}
-            onPress={() => setSelectedCategory(category)}
-            style={
-              selectedCategory === category
-                ? styles.categoryActive
-                : styles.categoryInactive
-            }
+            {options.map((option, index) => (
+              <Pressable
+                key={index}
+                onPress={() => {
+                  setSelectedOptionIndex(index);
+                }}
+                style={
+                  selectedOptionIndex === index
+                    ? {
+                        flex: 1,
+                        backgroundColor: "#ff9999",
+                        borderRadius: 10,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        shadowColor: "#fb4a4a",
+                        shadowOffset: { width: 0, height: 4 },
+                        shadowOpacity: 0.3,
+                        shadowRadius: 8,
+                        elevation: 4,
+                      }
+                    : {
+                        flex: 1,
+                        backgroundColor: "#fff",
+                        borderRadius: 10,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        shadowColor: "#d4d4d4",
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.05,
+                        shadowRadius: 4,
+                        elevation: 2,
+                      }
+                }
+              >
+                <Text
+                  style={
+                    selectedOptionIndex === index
+                      ? { color: "#fff", fontFamily: "Poppins_600SemiBold" }
+                      : { color: "#595959", fontFamily: "Poppins_600SemiBold" }
+                  }
+                >
+                  {option}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+
+          {options[selectedOptionIndex] == "Manual" && (
+            <View>
+              <Text
+                style={{
+                  marginTop: 30,
+                  color: "#c0404a",
+                  fontFamily: "Poppins_500Medium",
+                  fontSize: 16,
+                  textAlign: "center",
+                }}
+              >
+                PKR
+              </Text>
+
+              <TextInput
+                style={{
+                  borderRadius: 10,
+                  width: "100%",
+                  fontSize: 50,
+                  fontFamily: "Poppins_600SemiBold",
+                  color: "#000",
+                  textAlign: "center",
+                  paddingVertical: 0,
+                }}
+                value={amount}
+                placeholder="0"
+                placeholderTextColor={"#000"}
+                cursorColor={"#000"}
+                onChangeText={setAmount}
+                keyboardType="numeric"
+              />
+            </View>
+          )}
+
+          {/* Selecting Categories */}
+          <Text
+            style={{
+              marginTop: 30,
+              color: "#000",
+              fontFamily: "Poppins_600SemiBold",
+              fontSize: 16,
+            }}
           >
-            <Text
-              style={
-                selectedCategory === category
-                  ? styles.categoryTextActive
-                  : styles.categoryTextInactive
-              }
-            >
-              {category}
-            </Text>
-          </Pressable>
-        ))}
-      </View>
-    </View>
+            Category
+          </Text>
+          <View
+            style={{
+              flexDirection: "row",
+              flexWrap: "wrap",
+              width: "100%",
+              gap: 10,
+              marginTop: 10,
+            }}
+          >
+            {categories.map((category, index) => (
+              <Pressable
+                key={index}
+                onPress={() => setSelectedCategory(category)}
+                style={
+                  selectedCategory === category
+                    ? styles.categoryActive
+                    : styles.categoryInactive
+                }
+              >
+                <Text
+                  style={
+                    selectedCategory === category
+                      ? styles.categoryTextActive
+                      : styles.categoryTextInactive
+                  }
+                >
+                  {category}
+                </Text>
+              </Pressable>
+            ))}
+          </View>
+
+          {options[selectedOptionIndex] == "Manual" ? (
+            <View>
+              <Text
+                style={{
+                  marginTop: 20,
+                  color: "#000",
+                  fontFamily: "Poppins_600SemiBold",
+                  fontSize: 16,
+                }}
+              >
+                Title
+              </Text>
+
+              <TextInput
+                multiline={true}
+                style={{
+                  borderRadius: 10,
+                  paddingHorizontal: 12,
+                  height: 50,
+                  width: "100%",
+                  marginTop: 10,
+                  backgroundColor: "#f7e3e5",
+                  elevation: 1,
+                  borderWidth: 0,
+                  color: "#c0404a",
+                }}
+                value={description}
+                placeholder="Enter the title of your expense"
+                placeholderTextColor={"#e8909a"}
+                cursorColor={"#ff6b7a"}
+                onChangeText={setDescription}
+              />
+
+              <Text
+                style={{
+                  marginTop: 20,
+                  color: "#000",
+                  fontFamily: "Poppins_600SemiBold",
+                  fontSize: 16,
+                }}
+              >
+                Description
+              </Text>
+              <TextInput
+                multiline={true}
+                style={{
+                  borderRadius: 10,
+                  paddingHorizontal: 12,
+                  // flex: 1,
+                  height: 50,
+                  width: "100%",
+                  marginTop: 10,
+                  backgroundColor: "#f7e3e5",
+                  elevation: 1,
+                  borderWidth: 0,
+                  color: "#c0404a",
+                }}
+                value={title}
+                placeholder="Enter the description of your expense"
+                placeholderTextColor={"#e8909a"}
+                cursorColor={"#ff6b7a"}
+                onChangeText={setTitle}
+              />
+            </View>
+          ) : (
+            <Text style={{ marginTop: 30 }}>Camera feature Coming soon</Text>
+          )}
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 const styles = StyleSheet.create({

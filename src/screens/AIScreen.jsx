@@ -18,6 +18,7 @@ import { KeyboardAvoidingView } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import { Ionicons } from "@expo/vector-icons";
 import Markdown from "react-native-markdown-display";
+import Header from "../components/Header";
 
 
 const OPEN_ROUTER_API_KEY = process.env.EXPO_PUBLIC_OPEN_ROUTER_API_KEY;
@@ -161,9 +162,8 @@ const AIScreen = () => {
       edges={["top"]}
     >
       <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
-        <View style={styles.customHeader}>
-          <Text style={styles.headerTitle}>Add Entry</Text>
-        </View>
+        <Header headerTitle={"Analytics"}/>
+
         <ScrollView
           ref={scrollViewRef}
           contentContainerStyle={{
@@ -328,6 +328,7 @@ const AIScreen = () => {
             }
             onChangeText={(text) => setPrompt(text)}
           />
+          
           <Pressable
             style={({ pressed }) => ({
               width: 48,
@@ -354,21 +355,5 @@ const AIScreen = () => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  customHeader: {
-    height: 60,
-    backgroundColor: "#fffbf7",
-    justifyContent: "center",
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: "#f0e6dc",
-  },
-  headerTitle: {
-    fontFamily: "Poppins_600SemiBold",
-    fontSize: 18,
-    color: "#333",
-  },
-});
 
 export default AIScreen;

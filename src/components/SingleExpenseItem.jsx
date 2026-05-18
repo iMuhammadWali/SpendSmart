@@ -81,10 +81,7 @@ const SingleExpenseItem = ({ item }) => {
                     fontSize: 10,
                     color: "#C4BDB7",
                 }}>
-                    {new Date(item.date).toLocaleTimeString("en-US", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                    })}
+                    {new Date(item.createdAt).toLocaleDateString()}
                 </Text>
             </View>
         </View>
