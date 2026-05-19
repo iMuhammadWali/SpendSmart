@@ -20,16 +20,16 @@ import { Ionicons } from "@expo/vector-icons";
 import Markdown from "react-native-markdown-display";
 import Header from "../components/Header";
 
+// services.
+import { sendMessage } from "../services/aiService";
 
-const OPEN_ROUTER_API_KEY = process.env.EXPO_PUBLIC_OPEN_ROUTER_API_KEY;
+// custom hooks
+import { useAiChat } from "../hooks/useAiChat"; 
 
 const AIScreen = () => {
   const [prompt, setPrompt] = useState("");
-  const [aiResponse, setAiResponse] = useState(
-    "This is where your AI response will be shown.",
-  );
-  const [isLoading, setIsLoading] = useState(false);
-  const [history, setHistory] = useState([]);
+
+  const {history, isLoading, send} = useAiChat();
 
   const [copiedIndex, setCopiedIndex] = useState(null);
   const scrollViewRef = useRef(null);
@@ -44,125 +44,13 @@ const AIScreen = () => {
     setTimeout(() => setCopiedIndex(null), 2000);
   };
 
-  const handleButtonPress = async () => {
-    console.log(OPEN_ROUTER_API_KEY);
-    if (isLoading) return;
-    setHistory((prev) => [...prev, { role: "user", content: prompt }]);
-    setIsLoading(true);
-    setAiResponse("Model is responding...");
-    setPrompt("");
-    console.log("Button pressed");
-    const recent = history.slice(-12);
-    try {
-      const response = await fetch(
-        "https://openrouter.ai/api/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            Authorization:
-              `Bearer ${OPEN_ROUTER_API_KEY}`,
-            "Content-Type": "application/json",
-            "HTTP-Referer": "http://localhost",
-            "X-OpenRouter-Title": "SpendSmart",
-          },
-          body: JSON.stringify({
-            // model: "openai/gpt-5.2",
-            model: "deepseek/deepseek-v4-flash",
-            // model: "google/gemma-4-31b-it",
-            // model: "nvidia/nemotron-3-super-120b-a12b",
-            // model: "inclusionai/ring-2.6-1t",
-            max_tokens: 3000,
-            messages: [
-              {
-                role: "system",
-                // content: "You are being used in an app called as SpendSmart and I will later use you as the AI assitant that gives financial advice. Never use emojis in this chat."
-                content: `You are Muffin, the AI financial advisor integrated into the SpendSmart application.
-
-                                Your role is to help users make smarter financial decisions using their spending habits, budgets, financial goals, transaction history, and behavioral patterns.
-
-                                Core Responsibilities:
-                                - Analyze user spending behavior.
-                                - Detect unhealthy financial patterns.
-                                - Suggest realistic budgeting strategies.
-                                - Help users reduce unnecessary expenses.
-                                - Encourage sustainable financial habits.
-                                - Explain financial concepts in simple language.
-                                - Provide practical and actionable recommendations.
-                                - Help users improve saving consistency.
-                                - Detect recurring subscriptions or wasteful spending trends.
-                                - Offer spending breakdown insights when transaction data is available.
-                                - Help users understand where their money is going.
-
-                                Behavior Rules:
-                                - Never use emojis.
-                                - Never act overly cheerful, childish, or theatrical.
-                                - Maintain a calm, intelligent, professional tone.
-                                - Avoid sounding robotic or overly corporate.
-                                - Be concise when possible, detailed when necessary.
-                                - Do not use excessive formatting.
-                                - Use markdown cleanly for readability.
-                                - Prefer bullet points over long paragraphs when giving advice.
-
-                                Financial Philosophy:
-                                - Prioritize long-term financial stability over impulsive optimization.
-                                - Encourage discipline without sounding judgmental.
-                                - Adapt advice to the user's apparent income and spending behavior.
-                                - Recommend realistic savings strategies instead of extreme austerity.
-                                - Emphasize consistency over perfection.
-
-                                When Analyzing Expenses:
-                                - Identify patterns and trends.
-                                - Mention high-spending categories.
-                                - Detect unusual spikes in spending.
-                                - Mention recurring charges when relevant.
-                                - Provide concrete improvement suggestions.
-                                - Suggest achievable budget allocations if enough data exists.
-
-                                Constraints:
-                                - Do not fabricate financial data.
-                                - Do not pretend to have access to transactions that were not provided.
-                                - Do not provide legal, tax, or investment guarantees.
-                                - Clearly state uncertainty when information is insufficient.
-                                - Avoid generic motivational language.
-
-                                Formatting Preferences:
-                                - Use markdown headings when useful.
-                                - Use concise bullet points for recommendations.
-                                - Use tables only when necessary.
-                                - Keep responses easy to scan in a mobile chat interface.
-
-                                The app you are operating inside is called SpendSmart.`,
-              },
-              ...recent,
-              {
-                role: "user",
-                content: prompt,
-              },
-            ],
-          }),
-        },
-      );
-
-      const data = await response.json();
-      const reply = data.choices[0].message.content;
-      setAiResponse(reply);
-      setHistory((prev) => [...prev, { role: "assistant", content: reply }]);
-
-      console.log(aiResponse);
-      setIsLoading(false);
-    } catch (err) {
-      //TODO: Handle error gracefully.
-      console.log(err);
-    }
-  };
-
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: "#fdf7f0" }}
       edges={["top"]}
     >
       <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
-        <Header headerTitle={"Analytics"}/>
+        <Header headerTitle={"Analytics"} />
 
         <ScrollView
           ref={scrollViewRef}
@@ -328,7 +216,7 @@ const AIScreen = () => {
             }
             onChangeText={(text) => setPrompt(text)}
           />
-          
+
           <Pressable
             style={({ pressed }) => ({
               width: 48,
@@ -340,7 +228,10 @@ const AIScreen = () => {
               elevation: 3,
               alignSelf: "flex-end",
             })}
-            onPress={handleButtonPress}
+            onPress={()=> {
+              send(prompt);
+              setPrompt("");
+            }}
           >
             {isLoading ? (
               <ActivityIndicator size={20} color={"#fff"} />

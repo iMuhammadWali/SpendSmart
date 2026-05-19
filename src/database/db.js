@@ -60,16 +60,15 @@ export async function loadDummyExpenses() {
 
 export async function insertExpense(e){
     // I can also use a preparedStatement.
-    console.log("we are here");
-    const {title, category, description, amount} = e;
-    const result = await db.runAsync('INSERT INTO expenses (title, amount, category, description, createdAt) VALUES (?, ?, ?, ?, ?)', [title, amount, category, description, new Date().toISOString()]);
+    const {title, selectedCategory, description, amount} = e;
+    const result = await db.runAsync('INSERT INTO expenses (title, amount, category, description, createdAt) VALUES (?, ?, ?, ?, ?)', [title, amount, selectedCategory, description, new Date().toISOString()]);
 
     return result;
 }
 
 export async function getAllExpenses() {
     if (!db) {
-        ToastAndroid.show("DB not initialized", ToastAndroid.SHORT);
+        //ToastAndroid.show("DB not initialized", ToastAndroid.SHORT);
         return [];
     }
 
