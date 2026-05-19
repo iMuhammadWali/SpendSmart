@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FlatList, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 // TODO: After completing the design, Ask AI to put all the styling in the styles object.
@@ -8,12 +8,12 @@ import { getAllExpenses, loadDummyExpenses } from "../database/db";
 import SingleExpenseItem from "../components/SingleExpenseItem";
 
 import PinkBarChart from "../components/PinkBarChart";
+import useExpenses from "../hooks/useExpenses";
 
 const HomeSreen = () => {
   const [month, setMonth] = useState("");
   const [totalSpent, setTotalSpent] = useState(0);
   const [remaining, setRemaining] = useState("6,550");
-  const [expenses, setExpenses] = useState([]);
 
   const data = [
     { value: 50 },
@@ -23,26 +23,17 @@ const HomeSreen = () => {
     { value: 90 },
   ];
 
-  // TODO: Fetch previous 7 days transaction totals.
+  // TODO: Fetch previous 7 days transaction totals and then use for the bar chart.
+  const { expenses, isLoading, addExpense } = useExpenses();
 
   useEffect(() => {
-    const load = async () => {
-      const date = new Date();
-      const monthName = date.toLocaleString("default", { month: "short" });
-      setMonth(monthName);
+    const date = new Date();
+    const monthName = date.toLocaleString("default", { month: "short" });
+    setMonth(monthName);
 
-      const result = await getAllExpenses();
-      setExpenses(result);
-
-      const total = result.reduce((sum, item) => {
-        return sum + item.amount;
-      }, 0);
-
-      setTotalSpent(total);
-    };
-
-    load();
-  }, []);
+    const total = expenses.reduce((sum, item) => sum + item.amount, 0);
+    setTotalSpent(total);
+  }, [expenses]);
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>

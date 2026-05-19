@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import {
   Pressable,
   StyleSheet,
@@ -13,7 +13,9 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import Header from "../components/Header";
-import { insertExpense } from "../database/db";
+import useExpenses from "../hooks/useExpenses";
+
+// import { ExpenseContext } from "../context/ExpenseContext";
 
 const AddEntryScreen = () => {
   const [selectedOptionIndex, setSelectedOptionIndex] = useState(0);
@@ -25,11 +27,12 @@ const AddEntryScreen = () => {
 
   const options = ["Manual", "Scan"];
   const categories = ["Food", "Transport", "Health", "Cloth"];
-
+  
+  const {addExpense} = useExpenses();
   const saveExpense = async (expense) => {
-    await insertExpense(expense);
+    await addExpense(expense);
     ToastAndroid.show("Expense Inserted", ToastAndroid.SHORT);
-    console.log("HI BUDDY");
+    console.log("Exponse Inserted");
   }
 
   return (
