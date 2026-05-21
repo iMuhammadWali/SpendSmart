@@ -1,8 +1,8 @@
 // Contexts are shared runtime states.
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import { getAllExpenses, insertExpense } from "../database/db";
 
-// Create Context takes default value as parameter.
+// Create Context takes default value as parameter as null.
 export const ExpenseContext = createContext(null);
 
 export function ExpenseProvider({ children }) {
@@ -10,7 +10,7 @@ export function ExpenseProvider({ children }) {
   const [isLoading, setIsLoading] = useState(false);
 
   // For now I am not using useCallback here
-  const refreshExpenses = async () => {
+  const refreshExpenses = useCallback(async () => {
     try {
       setIsLoading(true);
       const data = await getAllExpenses();
@@ -21,13 +21,13 @@ export function ExpenseProvider({ children }) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     refreshExpenses();
   }, []);
 
-  const addExpense = async (expense) => {
+  const addExpense = useCallback(async (expense) => {
     try {
       setIsLoading(true);
       await insertExpense(expense);
@@ -38,12 +38,11 @@ export function ExpenseProvider({ children }) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   // Everything in the value attribute will be accessible to all children components.
   // So, if I want to use it in some other component, I can use it like this:
   // const { expenses, isLoading, refreshExpenses, addExpense } = useContext(ExpenseContext);
-
   return (
     <ExpenseContext.Provider value={{ expenses, isLoading, addExpense }}>
       {children}
