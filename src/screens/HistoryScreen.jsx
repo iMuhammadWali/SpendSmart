@@ -3,7 +3,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../components/Header";
 import { useEffect, useState, useCallback, useContext } from "react";
 import { useFocusEffect } from "@react-navigation/native";
-import { getAllExpenses } from "../database/db";
 import SingleExpenseItem from "../components/SingleExpenseItem";
 
 import useExpenses from "../hooks/useExpenses";

@@ -12,7 +12,7 @@ import OnboardingScreen from "./src/screens/OnboardingScreen";
 import HomeSreen from "./src/screens/HomeScreen";
 import AddEntryScreen from "./src/screens/AddEntryScreen";
 import { useEffect, useState } from "react";
-import { initDatabase, loadDummyExpenses } from "./src/database/db";
+import { initDatabase, loadDummyExpenses } from "./src/database/client";
 import AIScreen from "./src/screens/AIScreen";
 import HistoryScreen from "./src/screens/HistoryScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";

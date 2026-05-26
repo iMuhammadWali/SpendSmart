@@ -1,6 +1,6 @@
 // Contexts are shared runtime states.
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
-import { getAllExpenses, insertExpense } from "../database/db";
+import { getAllExpenses, insertExpense } from "../database/client";
 
 // Create Context takes default value as parameter as null.
 export const ExpenseContext = createContext(null);

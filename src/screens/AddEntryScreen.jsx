@@ -9,37 +9,75 @@ import {
   ScrollView,
   Platform,
   ToastAndroid,
+  Modal,
+  Button,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import Header from "../components/Header";
 import useExpenses from "../hooks/useExpenses";
 
-// import { ExpenseContext } from "../context/ExpenseContext";
+// import Modal from 'react-native-modal'
+
+  function ConfirmationDialog({onClose}) {
+    return (
+    <View
+      style={{
+        position: "absolute",
+        top: 0, left: 0, right: 0, bottom: 0,  // 
+        backgroundColor: "rgba(0,0,0,0.5)",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 99,
+      }}
+    >
+        <View
+          style={{
+            width: 300,
+            padding: 20,
+            backgroundColor: "white",
+            borderRadius: 10,
+          }}
+        >
+          <Text>Hello from modal</Text>
+
+          <Button title="Close" onPress={onClose} />
+        </View>
+      </View>
+    );
+  }
+
 
 const AddEntryScreen = () => {
   const [selectedOptionIndex, setSelectedOptionIndex] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState("Food");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState(0);
 
   const options = ["Manual", "Scan"];
-  const categories = ["Food", "Transport", "Health", "Cloth"];
-  
-  const {addExpense} = useExpenses();
+  const categories = ["Food", "Transport", "Health", "Cloth", "Other"];
+
+  const { addExpense } = useExpenses();
   const saveExpense = async (expense) => {
     await addExpense(expense);
     ToastAndroid.show("Expense Inserted", ToastAndroid.SHORT);
     console.log("Exponse Inserted");
-  }
+  };
+
+  const toggleDialog = () => {
+    setIsDialogOpen(!isDialogOpen);
+  };
 
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: "#fdf7f0", paddingHorizontal: 20 }}
       edges={["top"]}
     >
+      {isDialogOpen && <ConfirmationDialog onClose={()=>{setIsDialogOpen(false)}}/>}
+
       <Header headerTitle="Add New Entry" />
       <KeyboardAvoidingView
         style={{ flex: 1 }}
@@ -262,7 +300,10 @@ const AddEntryScreen = () => {
                     pressed && { backgroundColor: "#ff7e7e" },
                   ];
                 }}
-                onPress={() => {saveExpense({title, selectedCategory, description, amount})}}
+                onPress={() => {
+                  setIsDialogOpen(true);
+                  saveExpense({ title, selectedCategory, description, amount });
+                }}
               >
                 <Text
                   style={{

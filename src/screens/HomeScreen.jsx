@@ -4,7 +4,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 // TODO: After completing the design, Ask AI to put all the styling in the styles object.
 
 import { Ionicons } from "@expo/vector-icons";
-import { getAllExpenses, loadDummyExpenses } from "../database/db";
 import SingleExpenseItem from "../components/SingleExpenseItem";
 
 import PinkBarChart from "../components/PinkBarChart";
