@@ -3,7 +3,6 @@
 const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const MODEL = 'deepseek/deepseek-v4-flash';
 
-
 // Some other models to consider:
 // model: "openai/gpt-5.2",
 // model: "google/gemma-4-31b-it",

@@ -24,12 +24,12 @@ import Header from "../components/Header";
 import { sendMessage } from "../services/aiService";
 
 // custom hooks
-import { useAiChat } from "../hooks/useAiChat"; 
+import { useAiChat } from "../hooks/useAiChat";
 
 const AIScreen = () => {
   const [prompt, setPrompt] = useState("");
 
-  const {history, isLoading, send} = useAiChat();
+  const { history, isLoading, send } = useAiChat();
 
   const [copiedIndex, setCopiedIndex] = useState(null);
   const scrollViewRef = useRef(null);
@@ -228,7 +228,7 @@ const AIScreen = () => {
               elevation: 3,
               alignSelf: "flex-end",
             })}
-            onPress={()=> {
+            onPress={() => {
               send(prompt);
               setPrompt("");
             }}

@@ -19,33 +19,33 @@ import useExpenses from "../hooks/useExpenses";
 
 // import Modal from 'react-native-modal'
 
-  function ConfirmationDialog({onClose}) {
-    return (
-    <View
-      style={{
-        position: "absolute",
-        top: 0, left: 0, right: 0, bottom: 0,  // 
-        backgroundColor: "rgba(0,0,0,0.5)",
-        justifyContent: "center",
-        alignItems: "center",
-        zIndex: 99,
-      }}
-    >
-        <View
-          style={{
-            width: 300,
-            padding: 20,
-            backgroundColor: "white",
-            borderRadius: 10,
-          }}
-        >
-          <Text>Hello from modal</Text>
+function ConfirmationDialog({onClose}) {
+  return (
+  <View
+    style={{
+      position: "absolute",
+      top: 0, left: 0, right: 0, bottom: 0,  // 
+      backgroundColor: "rgba(0,0,0,0.5)",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 99,
+    }}
+  >
+      <View
+        style={{
+          width: 300,
+          padding: 20,
+          backgroundColor: "white",
+          borderRadius: 10,
+        }}
+      >
+        <Text>Hello from modal</Text>
 
-          <Button title="Close" onPress={onClose} />
-        </View>
+        <Button title="Close" onPress={onClose} />
       </View>
-    );
-  }
+    </View>
+  );
+}
 
 
 const AddEntryScreen = () => {
@@ -64,7 +64,6 @@ const AddEntryScreen = () => {
   const saveExpense = async (expense) => {
     await addExpense(expense);
     ToastAndroid.show("Expense Inserted", ToastAndroid.SHORT);
-    console.log("Exponse Inserted");
   };
 
   const toggleDialog = () => {
@@ -296,13 +295,12 @@ const AddEntryScreen = () => {
                       alignItems: "center",
                       borderRadius: 10,
                     },
-                    ,
                     pressed && { backgroundColor: "#ff7e7e" },
                   ];
                 }}
                 onPress={() => {
                   setIsDialogOpen(true);
-                  saveExpense({ title, selectedCategory, description, amount });
+                  saveExpense({ title, category: selectedCategory, description, amount });
                 }}
               >
                 <Text
