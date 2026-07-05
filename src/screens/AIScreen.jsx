@@ -184,7 +184,7 @@ const AIScreen = () => {
                 marginBottom: 10,
               }}
             >
-              <Text style={{ color: "#c9a0a8" }}>Model is thinking...</Text>
+              <Text style={{ color: "#c9a0a8" }}>Muffin is thinking...</Text>
             </View>
           ) : null}
         </ScrollView>
