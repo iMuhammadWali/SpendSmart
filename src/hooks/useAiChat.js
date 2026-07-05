@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { sendMessage } from "../services/aiService";
-
-const OPEN_ROUTER_API_KEY = process.env.EXPO_PUBLIC_OPEN_ROUTER_API_KEY;
+import { sendMessageAndGetReply } from "../services/aiService";
 
 export function useAiChat() {
   const [history, setHistory] = useState([]);
@@ -14,7 +12,7 @@ export function useAiChat() {
     // Now send the message.
     setIsLoading(true);
     try {
-      const reply = await sendMessage(history, prompt, OPEN_ROUTER_API_KEY);
+      const reply = await sendMessageAndGetReply(history, prompt);
       setHistory((prev) => [...prev, { role: "user", content: prompt }]);
       setHistory((prev) => [...prev, { role: "assistant", content: reply }]);
     } catch (err) {

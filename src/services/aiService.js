@@ -3,6 +3,8 @@
 const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const MODEL = 'deepseek/deepseek-v4-flash';
 
+const OPEN_ROUTER_API_KEY = process.env.EXPO_PUBLIC_OPEN_ROUTER_API_KEY;
+
 // Some other models to consider:
 // model: "openai/gpt-5.2",
 // model: "google/gemma-4-31b-it",
@@ -66,7 +68,7 @@ const SYSTEM_PROMPT = `You are Muffin, the AI financial advisor integrated into 
 
                                 The app you are operating inside is called SpendSmart.`;
 
-export async function sendMessage(history, userMessage, apiKey){
+export async function sendMessageAndGetReply(history, userMessage){
     // Send the last 12 messages only.
     const recent = history.slice(-12);
 
@@ -74,7 +76,7 @@ export async function sendMessage(history, userMessage, apiKey){
     const response = await fetch(API_URL, {
         method: "POST",
         headers: {
-            Authorization: `Bearer ${apiKey}`,
+            Authorization: `Bearer ${OPEN_ROUTER_API_KEY}`,
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
