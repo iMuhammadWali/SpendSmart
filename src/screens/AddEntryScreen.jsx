@@ -1,5 +1,5 @@
 // The first task of today is to make a confirmation dialog.
-import { useContext, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import {
   Pressable,
   StyleSheet,
@@ -18,58 +18,22 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../components/Header";
 import useExpenses from "../hooks/useExpenses";
 
-function ConfirmationDialog({ isDialogOpen, onClose }) {
-  return (
-    <Modal
-      animationType="slide"
-      visible={isDialogOpen}
-      transparent={true}
-      onRequestClose={() => {
-        ToastAndroid.show("Dialog has been closed.", ToastAndroid.SHORT);
-        setIsDialogOpen(false);
-      }}
-    >
-      <View
-        style={{
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-        }}
-      >
-        <View style={{
-          width: "80%",
-          backgroundColor: "#fdf7f0",
-          padding: 30,
-          borderRadius: 10,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.25,
-          shadowRadius: 4,
-          elevation: 5  
-        }}>
-          <Pressable style={{backgroundColor: '#FF3B30', width: 20, height: 20, borderRadius: 10}}
-          onPress={onClose}>
-          </Pressable>
-
-          <Text>I am Wali and I am the best.</Text>
-        </View>
-      </View>
-    </Modal>
-  );
-}
+import ConfirmationDialog from "../components/ConfirmationDialog";
 
 const AddEntryScreen = () => {
-  const [selectedOptionIndex, setSelectedOptionIndex] = useState(0);
-  const [selectedCategory, setSelectedCategory] = useState("Food");
+  // Global immutable necesary information.
+  const options = ["Manual", "Scan"];
+  const categories = ["food", "fransport", "health", "cloth", "other"];
+
+  const [selectedMediumIndex, setSelectedMediumIndex] = useState(0);
+  const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const [expense, setExpense] = useState({});
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState(0);
-
-  const options = ["Manual", "Scan"];
-  const categories = ["food", "fransport", "health", "cloth", "other"];
 
   const { addExpense } = useExpenses();
 
@@ -88,15 +52,14 @@ const AddEntryScreen = () => {
     >
       <ConfirmationDialog
         isDialogOpen={isDialogOpen}
-        onClose={()=>{setIsDialogOpen(false)}}
+        onClose={() => {
+          setIsDialogOpen(false);
+        }}
+        expense={expense}
       />
 
       <Header headerTitle="Add New Entry" />
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        // behavior={Platform.OS === "ios" ? "padding" : "height"}
-        behavior="padding"
-      >
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
         <ScrollView
           contentContainerStyle={{ paddingBottom: 40 }}
           keyboardShouldPersistTaps="handled"
@@ -114,10 +77,10 @@ const AddEntryScreen = () => {
               <Pressable
                 key={index}
                 onPress={() => {
-                  setSelectedOptionIndex(index);
+                  setSelectedMediumIndex(index);
                 }}
                 style={
-                  selectedOptionIndex === index
+                  selectedMediumIndex === index
                     ? {
                         flex: 1,
                         backgroundColor: "#ff9999",
@@ -146,7 +109,7 @@ const AddEntryScreen = () => {
               >
                 <Text
                   style={
-                    selectedOptionIndex === index
+                    selectedMediumIndex === index
                       ? { color: "#fff", fontFamily: "Poppins_600SemiBold" }
                       : { color: "#595959", fontFamily: "Poppins_600SemiBold" }
                   }
@@ -157,7 +120,7 @@ const AddEntryScreen = () => {
             ))}
           </View>
 
-          {options[selectedOptionIndex] == "Manual" && (
+          {options[selectedMediumIndex] == "Manual" && (
             <View>
               <Text
                 style={{
@@ -214,16 +177,16 @@ const AddEntryScreen = () => {
             {categories.map((category, index) => (
               <Pressable
                 key={index}
-                onPress={() => setSelectedCategory(category)}
+                onPress={() => setSelectedCategoryIndex(index)}
                 style={
-                  selectedCategory === category
+                  categories[selectedCategoryIndex] === category
                     ? styles.categoryActive
                     : styles.categoryInactive
                 }
               >
                 <Text
                   style={
-                    selectedCategory === category
+                    categories[selectedCategoryIndex] === category
                       ? styles.categoryTextActive
                       : styles.categoryTextInactive
                   }
@@ -234,7 +197,7 @@ const AddEntryScreen = () => {
             ))}
           </View>
 
-          {options[selectedOptionIndex] == "Manual" ? (
+          {options[selectedMediumIndex] == "Manual" ? (
             <View>
               <Text
                 style={{
@@ -313,6 +276,8 @@ const AddEntryScreen = () => {
                   ];
                 }}
                 onPress={() => {
+                  const category = categories[selectedCategoryIndex];
+                  setExpense({title, description, category});
                   setIsDialogOpen(true);
                   // saveExpense({ title, category: selectedCategory, description, amount });
                 }}
