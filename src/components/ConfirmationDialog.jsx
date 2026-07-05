@@ -18,9 +18,10 @@ function Expense({ expense }) {
     <View style={styles.vExpense}>
       <Text style={styles.txtExpenseInfo}>
         <Text style={styles.txtExpenseInfoBold}>Title: </Text>
-        {expense.title}
+        {expense.title ? expense.title : "No title entered!"}
       </Text>
 
+      {/* In case someone asks why I have not added any check for category, it is because there is no way for category to be empty. */}
       <Text style={styles.txtExpenseInfo}>
         <Text style={styles.txtExpenseInfoBold}>Category: </Text>
         {expense.category}
@@ -41,7 +42,7 @@ function Expense({ expense }) {
   );
 }
 
-export default function ConfirmationDialog({ isDialogOpen, onClose, expense }) {
+export default function ConfirmationDialog({ isDialogOpen, expense, onCancel, onSave }) {
   return (
     <Modal animationType="slide" visible={isDialogOpen} transparent={true}>
       {/* The outer view, that covers the whole screen */}
@@ -74,11 +75,11 @@ export default function ConfirmationDialog({ isDialogOpen, onClose, expense }) {
           <Expense expense={expense}></Expense>
 
           <View style={styles.vButtons}>
-            <Pressable onPress={onClose} style={styles.btnCancel}>
+            <Pressable onPress={onCancel} style={styles.btnCancel}>
               <Text>Cancel</Text>
             </Pressable>
 
-            <Pressable style={styles.btnSave}>
+            <Pressable onPress={onSave} style={styles.btnSave}>
               <Text style={styles.txtSave}>Save</Text>
             </Pressable>
           </View>

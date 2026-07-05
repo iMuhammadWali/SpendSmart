@@ -9,10 +9,14 @@ import SingleExpenseItem from "../components/SingleExpenseItem";
 import PinkBarChart from "../components/PinkBarChart";
 import useExpenses from "../hooks/useExpenses";
 
+import { useNavigation } from "@react-navigation/native";
+
 const HomeSreen = () => {
   const [month, setMonth] = useState("");
   const [totalSpent, setTotalSpent] = useState(0);
-  const [remaining, setRemaining] = useState("6,550");
+  const [remaining, setRemaining] = useState("Maybe");
+
+  const navigator = useNavigation();
 
   const data = [
     { value: 50 },
@@ -80,7 +84,7 @@ const HomeSreen = () => {
               fontSize: 22,
             }}
           >
-            PKR {remaining}
+            {remaining}
           </Text>
         </View>
       </View>
@@ -158,6 +162,9 @@ const HomeSreen = () => {
               color: "#d75d69",
               fontFamily: "Poppins_500Medium",
               fontSize: 16,
+            }}
+            onPress={()=>{
+              navigator.navigate("History")
             }}
           >
             See all

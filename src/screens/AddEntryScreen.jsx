@@ -1,4 +1,3 @@
-// The first task of today is to make a confirmation dialog.
 import { useContext, useRef, useState } from "react";
 import {
   Pressable,
@@ -21,9 +20,8 @@ import useExpenses from "../hooks/useExpenses";
 import ConfirmationDialog from "../components/ConfirmationDialog";
 
 const AddEntryScreen = () => {
-  // Global immutable necesary information.
   const options = ["Manual", "Scan"];
-  const categories = ["food", "fransport", "health", "cloth", "other"];
+  const categories = ["food", "transport", "health", "cloth", "other"];
 
   const [selectedMediumIndex, setSelectedMediumIndex] = useState(0);
   const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(0);
@@ -38,9 +36,6 @@ const AddEntryScreen = () => {
   const { addExpense } = useExpenses();
 
   const saveExpense = async (expense) => {
-    // TODO: Need to add a check if all entries are filled or not.
-    return;
-
     await addExpense(expense);
     ToastAndroid.show("Expense Inserted", ToastAndroid.SHORT);
   };
@@ -52,10 +47,17 @@ const AddEntryScreen = () => {
     >
       <ConfirmationDialog
         isDialogOpen={isDialogOpen}
-        onClose={() => {
+        expense={expense}
+        onCancel={() => {
           setIsDialogOpen(false);
         }}
-        expense={expense}
+        onSave={() => {
+          saveExpense(expense);
+          setAmount(0);
+          setTitle("");
+          setDescription("");
+          setIsDialogOpen(false);
+        }}
       />
 
       <Header headerTitle="Add New Entry" />
@@ -276,10 +278,26 @@ const AddEntryScreen = () => {
                   ];
                 }}
                 onPress={() => {
+                  let isInvalid = !title || !amount;
+                  if (!title) {
+                    ToastAndroid.show(
+                      "You must enter the title to save an expense.",
+                      ToastAndroid.SHORT,
+                    );
+                  }
+                  if (!amount) {
+                    ToastAndroid.show(
+                      "You must enter the amount to save an expense.",
+                      ToastAndroid.SHORT,
+                    );
+                  }
+                  if (isInvalid) {
+                    return;
+                  }
+
                   const category = categories[selectedCategoryIndex];
-                  setExpense({title, description, category});
+                  setExpense({title, category, amount, description})
                   setIsDialogOpen(true);
-                  // saveExpense({ title, category: selectedCategory, description, amount });
                 }}
               >
                 <Text
