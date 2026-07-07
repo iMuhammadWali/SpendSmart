@@ -42,7 +42,7 @@ const AddEntryScreen = () => {
 
   return (
     <SafeAreaView
-      style={{ flex: 1, backgroundColor: "#fdf7f0", paddingHorizontal: 20 }}
+      style={{ flex: 1, backgroundColor: "#ffffff" }}
       edges={["top"]}
     >
       <ConfirmationDialog
@@ -61,7 +61,7 @@ const AddEntryScreen = () => {
       />
 
       <Header headerTitle="Add New Entry" />
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
+      <KeyboardAvoidingView style={{ flex: 1, paddingHorizontal: 20 }} behavior="padding">
         <ScrollView
           contentContainerStyle={{ paddingBottom: 40 }}
           keyboardShouldPersistTaps="handled"

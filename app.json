@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "SpendSmart",
-    "slug": "SpendSmart",
+    "name": "Pockit",
+    "slug": "Pockit",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/logo.png",

@@ -1,14 +1,8 @@
 import { useState } from "react";
-import {
-  View,
-  Image,
-  StyleSheet,
-  Text,
-  Pressable,
-  ToastAndroid,
-} from "react-native";
+import { View, Image, StyleSheet, Text, ToastAndroid } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
+import PrimaryButton from "../components/PrimaryButton";
 
 const OnboardingScreen = () => {
   const navigator = useNavigation();
@@ -31,17 +25,7 @@ const OnboardingScreen = () => {
           <Text style={styles.financialText}>Financial</Text> Advice
         </Text>
 
-        <Pressable
-          style={({ pressed }) => {
-            return [
-              styles.getStartedButton,
-              pressed && styles.pressedGetStartedButton,
-            ]; // Automatically applies when touched
-          }}
-          onPress={handleButtonPress}
-        >
-          <Text style={styles.getStartedButtonText}>Get Started</Text>
-        </Pressable>
+        <PrimaryButton label="Get Started" onPress={handleButtonPress} />
       </View>
     </SafeAreaView>
   );
@@ -70,23 +54,6 @@ const styles = StyleSheet.create({
   },
   financialText: {
     color: "#ff9999",
-  },
-  getStartedButton: {
-    marginTop: 50,
-    backgroundColor: "#ff9999",
-    width: 300,
-    height: 50,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 10,
-  },
-  pressedGetStartedButton: {
-    backgroundColor: "#ff7e7e",
-  },
-  getStartedButtonText: {
-    color: "#fff",
-    color: "#000",
-    fontFamily: "Poppins_600SemiBold",
   },
 });
 

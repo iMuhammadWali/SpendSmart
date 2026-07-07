@@ -8,6 +8,8 @@ import useAppFonts from "./src/hooks/useAppFonts";
 
 import { Ionicons } from "@expo/vector-icons";
 
+import { LoginScreen } from "./src/screens/LoginScreen";
+
 import OnboardingScreen from "./src/screens/OnboardingScreen";
 import HomeSreen from "./src/screens/HomeScreen";
 import AddEntryScreen from "./src/screens/AddEntryScreen";
@@ -17,6 +19,7 @@ import AIScreen from "./src/screens/AIScreen";
 import HistoryScreen from "./src/screens/HistoryScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
 import { ExpenseProvider } from "./src/context/ExpenseContext";
+import { SignupScreen } from "./src/screens/SignupScreen";
 
 // For now I will code the navigation in the app.js and will export it later to a different file or maybe create a different folder for it later.
 const Stack = createNativeStackNavigator();
@@ -93,11 +96,9 @@ const HomeTabs = () => {
 const RootStack = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen
-        name="Onboarding"
-        component={OnboardingScreen}
-      ></Stack.Screen>
-      <Stack.Screen name="HomeTabs" component={HomeTabs}></Stack.Screen>
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="Signup" component={SignupScreen} />
+      <Stack.Screen name="HomeTabs" component={HomeTabs}/>
     </Stack.Navigator>
   );
 };

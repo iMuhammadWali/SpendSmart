@@ -8,13 +8,13 @@ import SingleExpenseItem from "../components/SingleExpenseItem";
 import useExpenses from "../hooks/useExpenses";
 
 const HistoryScreen = () => {
-  const {expenses, isLoading, addExpense} = useExpenses();
+  const { expenses, isLoading, addExpense } = useExpenses();
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       <Header headerTitle={"History"} />
       {/* <Text>{expenses}</Text> */}
-      <View style={{ width: "100%", flex: 1 }}>
+      <View style={{ width: "100%", flex: 1, backgroundColor: "#fdf7f0", paddingHorizontal: 20 }}>
         <FlatList
           data={expenses}
           renderItem={SingleExpenseItem}
@@ -31,8 +31,7 @@ const HistoryScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fdf7f0",
-    paddingHorizontal: 20,
+    backgroundColor: "#ffffff",
   },
 });
 
