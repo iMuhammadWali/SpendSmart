@@ -15,13 +15,29 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import InputField from "../components/InputField";
 import PrimaryButton from "../components/PrimaryButton";
 import { useNavigation } from "@react-navigation/native";
+import { registerAndLogin } from "../api/auth";
+import useAuth from "../hooks/useAuth";
 
-export function SignupScreen() {
+export function RegisterScreen() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { setIsLoggedIn } = useAuth();
 
   const navigator = useNavigation();
+
+  const handleRegister = async (username, email, password) => {
+    try {
+      const { ok, data } = await registerAndLogin(username, email, password);
+      if (ok) {
+        setIsLoggedIn(true);
+      } else {
+        // Will think what to do here later.
+      }
+    } catch (err) {
+      // I dont know what kind of errors can occur here.
+    }
+  };
 
   return (
     <SafeAreaView
@@ -38,7 +54,7 @@ export function SignupScreen() {
               source={require("../../assets/logo.png")}
               style={{ height: 200, width: 200 }}
             />
-            <Text style={styles.tvSignup}>
+            <Text style={styles.tvRegister}>
               Register for <Text style={styles.tvPockit}>Pockit</Text>
             </Text>
             <InputField
@@ -50,14 +66,22 @@ export function SignupScreen() {
               value={email}
               setValue={setEmail}
               placeholder={"Enter your email"}
+              icon={"mail-outline"}
             />
             <InputField
               value={password}
               setValue={setPassword}
               placeholder={"Enter your password"}
+              icon={"lock-closed-outline"}
+              secureTextEntry
             />
 
-            <PrimaryButton label="Sign up" onPress={() => {}} />
+            <PrimaryButton
+              label="Register"
+              onPress={() => {
+                handleRegister(username, email, password);
+              }}
+            />
 
             <Text style={{
               marginTop: 0,
@@ -78,7 +102,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: "20%",
   },
-  tvSignup: {
+  tvRegister: {
     marginVertical: 15,
     fontFamily: "Poppins_600SemiBold",
     fontSize: 28,

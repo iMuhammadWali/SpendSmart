@@ -84,10 +84,10 @@ export function LoginScreen() {
               Don't have an account?{" "}
               <Text
                 style={{ color: "#ff9999", fontWeight: "bold" }}
-                onPress={() => navigator.replace("Signup")}
+                onPress={() => navigator.replace("Register")}
               >
                 {" "}
-                Sign up{" "}
+                Register{" "}
               </Text>
             </Text>
           </View>
