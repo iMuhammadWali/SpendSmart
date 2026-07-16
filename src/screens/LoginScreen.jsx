@@ -1,5 +1,5 @@
-// TODO: Add symbols on Email and password placeholders. 
-import { useState } from "react";
+// TODO: Add symbols on Email and password placeholders.
+import { useCallback, useState } from "react";
 import {
   Image,
   KeyboardAvoidingView,
@@ -15,11 +15,28 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import InputField from "../components/InputField";
 import { useNavigation } from "@react-navigation/native";
 import PrimaryButton from "../components/PrimaryButton";
+import useAuth from "../hooks/useAuth";
+import { loginRequest } from "../api/auth";
+
+// I need to make a context of this logged in thingy.
 export function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const { isLoggedIn, setIsLoggedIn } = useAuth();
   const navigator = useNavigation();
+
+  const handleLogin = async (email, password) => {
+    try {
+      const { ok, data } = await loginRequest(email, password);
+      if (ok) {
+        setIsLoggedIn(true);
+      } else {
+        // Will think what to do here later.
+      }
+    } catch (err) {
+      // I dont know what kind of errors can occur here.
+    }
+  };
 
   return (
     <SafeAreaView
@@ -43,13 +60,21 @@ export function LoginScreen() {
               value={email}
               setValue={setEmail}
               placeholder={"Enter your email"}
+              icon={"mail-outline"}
             />
             <InputField
               value={password}
               setValue={setPassword}
               placeholder={"Enter your password"}
+              icon={"lock-closed-outline"}
+              secureTextEntry
             />
-            <PrimaryButton label="Log In" onPress={() => {}} />
+            <PrimaryButton
+              label="Log In"
+              onPress={() => {
+                handleLogin(email, password);
+              }}
+            />
             <Text
               style={{
                 marginTop: 0,

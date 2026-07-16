@@ -1,10 +1,10 @@
-import { View, Text } from "react-native";
+import { View, Text, Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-const SingleSettingsItem = ({ item }) => {
-  // TODO: Add the signup button, or if signed in, the email, and username
+const SingleSettingsItem = ({ item, onPress }) => {
   return (
-    <View
+    <Pressable
+      onPress={onPress}
       style={{
         width: "100%",
         flexDirection: "row",
@@ -22,6 +22,7 @@ const SingleSettingsItem = ({ item }) => {
         shadowOpacity: 0.1,
         shadowRadius: 8,
       }}
+      onPress={item.onPress}
     >
       {/* Icon */}
       <View
@@ -49,7 +50,7 @@ const SingleSettingsItem = ({ item }) => {
           {item.title}
         </Text>
       </View>
-    </View>
+    </Pressable>
   );
 };
 

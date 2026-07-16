@@ -20,6 +20,8 @@ import HistoryScreen from "./src/screens/HistoryScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
 import { ExpenseProvider } from "./src/context/ExpenseContext";
 import { SignupScreen } from "./src/screens/SignupScreen";
+import { AuthProvider } from "./src/context/AuthContext";
+import useAuth from "./src/hooks/useAuth";
 
 // For now I will code the navigation in the app.js and will export it later to a different file or maybe create a different folder for it later.
 const Stack = createNativeStackNavigator();
@@ -93,17 +95,25 @@ const HomeTabs = () => {
   );
 };
 
-const RootStack = () => {
+const AuthStack = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Signup" component={SignupScreen} />
-      <Stack.Screen name="HomeTabs" component={HomeTabs}/>
     </Stack.Navigator>
   );
 };
-export default function App() {
+
+const RootStack = () => {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="HomeTabs" component={HomeTabs} />
+    </Stack.Navigator>
+  );
+};
+const AppContent = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const { isLoggedIn } = useAuth();
 
   useEffect(() => {
     const load = async () => {
@@ -115,7 +125,7 @@ export default function App() {
   }, []);
 
   const fontsLoaded = useAppFonts();
-  if (!fontsLoaded || isLoading)
+  if (!fontsLoaded || isLoading) {
     return (
       <View
         style={{
@@ -128,11 +138,20 @@ export default function App() {
         <ActivityIndicator size="large" color="#000000" />
       </View>
     );
+  }
   return (
     <ExpenseProvider>
       <NavigationContainer>
-        <RootStack />
+        {isLoggedIn ? <RootStack /> : <AuthStack />}
       </NavigationContainer>
     </ExpenseProvider>
+  );
+};
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
