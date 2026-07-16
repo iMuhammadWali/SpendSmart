@@ -3,8 +3,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../components/Header";
 import { useEffect, useState } from "react";
 import SingleSettingsItem from "../components/SingleSettingsItem";
+import useAuth from "../hooks/useAuth";
 
 const SettingsScreen = () => {
+  const {setIsLoggedIn} = useAuth();
   // I can add icons here as well but I wont do it myself. I will let GPT do it.
   const options = [
     {
@@ -16,6 +18,9 @@ const SettingsScreen = () => {
       title: "Logout",
       icon: "log-out-outline",
       iconColor: "#E53935",
+      onPress: ()=>{
+        setIsLoggedIn(false);
+      }
     },
   ];
 

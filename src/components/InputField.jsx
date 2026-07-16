@@ -9,12 +9,14 @@ import {
   Platform,
   View,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
-export default function InputField({value, setValue, placeholder}) {
+export default function InputField({value, setValue, placeholder, icon, secureTextEntry}) {
   return (
-    <TextInput
-      multiline={true}
+    <View
       style={{
+        flexDirection: "row",
+        alignItems: "center",
         borderRadius: 10,
         paddingHorizontal: 12,
         height: 50,
@@ -22,14 +24,29 @@ export default function InputField({value, setValue, placeholder}) {
         marginVertical: 7,
         backgroundColor: "#f7e3e5",
         elevation: 1,
-        borderWidth: 0,
-        color: "#c0404a",
       }}
-      value={value}
-      placeholder={placeholder}
-      placeholderTextColor={"#e8909a"}
-      cursorColor={"#ff6b7a"}
-      onChangeText={setValue}
-    />
+    >
+      {icon && (
+        <Ionicons
+          name={icon}
+          size={20}
+          color={"#e8909a"}
+          style={{ marginRight: 8 }}
+        />
+      )}
+      <TextInput
+        style={{
+          flex: 1,
+          height: "100%",
+          color: "#c0404a",
+        }}
+        value={value}
+        placeholder={placeholder}
+        placeholderTextColor={"#e8909a"}
+        cursorColor={"#ff6b7a"}
+        onChangeText={setValue}
+        secureTextEntry={secureTextEntry}
+      />
+    </View>
   );
 }
