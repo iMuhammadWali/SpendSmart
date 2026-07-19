@@ -23,20 +23,22 @@ export function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
   const { isLoggedIn, setIsLoggedIn } = useAuth();
   const navigator = useNavigation();
 
   const handleLogin = async (email, password) => {
     setLoading(true);
+    setError("");
     try {
       const { ok, data } = await loginRequest(email, password);
       if (ok) {
         setIsLoggedIn(true);
       } else {
-        // Will think what to do here later.
+        setError(data?.message ?? "Login failed. Please try again.");
       }
     } catch (err) {
-      // I dont know what kind of errors can occur here.
+      setError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -80,6 +82,9 @@ export function LoginScreen() {
                 handleLogin(email, password);
               }}
             />
+            {error ? (
+              <Text style={styles.tvError}>{error}</Text>
+            ) : null}
             <Text
               style={{
                 marginTop: 0,
@@ -117,5 +122,11 @@ const styles = StyleSheet.create({
   },
   tvPockit: {
     color: "#ff9999",
+  },
+  tvError: {
+    marginTop: 10,
+    color: "#E53935",
+    fontFamily: "Poppins_400Regular",
+    textAlign: "center",
   },
 });

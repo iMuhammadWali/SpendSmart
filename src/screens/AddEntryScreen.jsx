@@ -18,6 +18,7 @@ import Header from "../components/Header";
 import useExpenses from "../hooks/useExpenses";
 
 import ConfirmationDialog from "../components/ConfirmationDialog";
+import ExpenseSummary from "../components/ExpenseSummary";
 
 const AddEntryScreen = () => {
   const options = ["Manual", "Scan"];
@@ -46,12 +47,14 @@ const AddEntryScreen = () => {
       edges={["top"]}
     >
       <ConfirmationDialog
-        isDialogOpen={isDialogOpen}
-        expense={expense}
+        isOpen={isDialogOpen}
+        title="Are you sure you want to save the following expense?"
+        body={<ExpenseSummary expense={expense} />}
+        confirmLabel="Save"
         onCancel={() => {
           setIsDialogOpen(false);
         }}
-        onSave={() => {
+        onConfirm={() => {
           saveExpense(expense);
           setAmount(0);
           setTitle("");

@@ -3,7 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../components/Header";
 import { useEffect, useState } from "react";
 import SingleSettingsItem from "../components/SingleSettingsItem";
-import LogoutDialog from "../components/LogoutDialog";
+import ConfirmationDialog from "../components/ConfirmationDialog";
 import useAuth from "../hooks/useAuth";
 
 const SettingsScreen = () => {
@@ -36,8 +36,10 @@ const SettingsScreen = () => {
         ))}
       </View>
 
-      <LogoutDialog
+      <ConfirmationDialog
         isOpen={isLogoutDialogOpen}
+        title="Are you sure you want to logout?"
+        confirmLabel="Logout"
         onCancel={() => setIsLogoutDialogOpen(false)}
         onConfirm={() => {
           setIsLogoutDialogOpen(false);
