@@ -22,10 +22,12 @@ import { loginRequest } from "../api/auth";
 export function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const { isLoggedIn, setIsLoggedIn } = useAuth();
   const navigator = useNavigation();
 
   const handleLogin = async (email, password) => {
+    setLoading(true);
     try {
       const { ok, data } = await loginRequest(email, password);
       if (ok) {
@@ -35,6 +37,8 @@ export function LoginScreen() {
       }
     } catch (err) {
       // I dont know what kind of errors can occur here.
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -71,6 +75,7 @@ export function LoginScreen() {
             />
             <PrimaryButton
               label="Log In"
+              loading={loading}
               onPress={() => {
                 handleLogin(email, password);
               }}

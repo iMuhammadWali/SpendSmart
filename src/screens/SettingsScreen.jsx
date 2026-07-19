@@ -1,12 +1,15 @@
-import { Pressable, StyleSheet, Text, View, FlatList } from "react-native";
+import { StyleSheet, View, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../components/Header";
 import { useEffect, useState } from "react";
 import SingleSettingsItem from "../components/SingleSettingsItem";
+import LogoutDialog from "../components/LogoutDialog";
 import useAuth from "../hooks/useAuth";
 
 const SettingsScreen = () => {
-  const {setIsLoggedIn} = useAuth();
+  const { setIsLoggedIn } = useAuth();
+  const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
+
   // I can add icons here as well but I wont do it myself. I will let GPT do it.
   const options = [
     {
@@ -18,9 +21,9 @@ const SettingsScreen = () => {
       title: "Logout",
       icon: "log-out-outline",
       iconColor: "#E53935",
-      onPress: ()=>{
-        setIsLoggedIn(false);
-      }
+      onPress: () => {
+        setIsLogoutDialogOpen(true);
+      },
     },
   ];
 
@@ -32,6 +35,15 @@ const SettingsScreen = () => {
           <SingleSettingsItem key={index} item={item}></SingleSettingsItem>
         ))}
       </View>
+
+      <LogoutDialog
+        isOpen={isLogoutDialogOpen}
+        onCancel={() => setIsLogoutDialogOpen(false)}
+        onConfirm={() => {
+          setIsLogoutDialogOpen(false);
+          setIsLoggedIn(false);
+        }}
+      />
     </SafeAreaView>
   );
 };

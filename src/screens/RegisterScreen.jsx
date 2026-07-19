@@ -32,7 +32,7 @@ export function RegisterScreen() {
       if (ok) {
         setIsLoggedIn(true);
       } else {
-        // Will think what to do here later.
+        // probably need to show some error on the screen.
       }
     } catch (err) {
       // I dont know what kind of errors can occur here.
