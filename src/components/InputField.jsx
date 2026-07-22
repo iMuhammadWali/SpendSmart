@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function InputField({value, setValue, placeholder, icon, secureTextEntry}) {
+export default function InputField({value, setValue, placeholder, icon, secureTextEntry, multiline}) {
   const [isSecure, setIsSecure] = useState(secureTextEntry);
 
   return (
@@ -33,6 +33,7 @@ export default function InputField({value, setValue, placeholder, icon, secureTe
         cursorColor={"#ff6b7a"}
         onChangeText={setValue}
         secureTextEntry={isSecure}
+        multiline={multiline}
       />
       {secureTextEntry && (
         <Pressable onPress={()=> setIsSecure(!isSecure)} hitSlop={8}>

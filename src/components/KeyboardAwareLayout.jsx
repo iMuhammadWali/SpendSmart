@@ -4,11 +4,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function KeyboardAwareLayout({
   children,
+  header,
   contentContainerStyle,
   edges = ["top"],
 }) {
   return (
     <SafeAreaView style={styles.vSafeArea} edges={edges}>
+      {header}
       <KeyboardAwareScrollView
         style={styles.vScroll}
         contentContainerStyle={[styles.vContentContainer, contentContainerStyle]}
@@ -17,6 +19,7 @@ export default function KeyboardAwareLayout({
         extraScrollHeight={20}
         keyboardOpeningTime={0}
         keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
       >
         {children}
       </KeyboardAwareScrollView>

@@ -41,6 +41,8 @@ yarn-error.*
 /ios
 /android
 
+# Utility files I am using.
 claude-local.ps1
 architectural_review.md
 opencode.json
+build.log
