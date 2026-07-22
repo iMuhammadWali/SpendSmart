@@ -1,15 +1,20 @@
-import { Pressable, Text, StyleSheet } from "react-native";
+import { ActivityIndicator, Pressable, Text, StyleSheet } from "react-native";
 
-const PrimaryButton = ({ label, onPress }) => {
+const PrimaryButton = ({ label, onPress, loading = false }) => {
   return (
     <Pressable
       style={({ pressed }) => [
         styles.button,
-        pressed && styles.pressedButton,
+        pressed && !loading && styles.pressedButton,
       ]}
       onPress={onPress}
+      disabled={loading}
     >
-      <Text style={styles.buttonText}>{label}</Text>
+      {loading ? (
+        <ActivityIndicator size="small" color="#000" />
+      ) : (
+        <Text style={styles.buttonText}>{label}</Text>
+      )}
     </Pressable>
   );
 };

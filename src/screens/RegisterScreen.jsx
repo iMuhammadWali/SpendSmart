@@ -1,5 +1,4 @@
-// TODO: Add symbols on Email and password placeholders.
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import {
   Image,
   StyleSheet,
@@ -7,35 +6,29 @@ import {
 } from "react-native";
 import KeyboardAwareLayout from "../components/KeyboardAwareLayout";
 import InputField from "../components/InputField";
-import { useNavigation } from "@react-navigation/native";
 import PrimaryButton from "../components/PrimaryButton";
+import { useNavigation } from "@react-navigation/native";
+import { registerAndLogin } from "../api/auth";
 import useAuth from "../hooks/useAuth";
-import { loginRequest } from "../api/auth";
 
-// I need to make a context of this logged in thingy.
-export function LoginScreen() {
+export function RegisterScreen() {
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const { isLoggedIn, setIsLoggedIn } = useAuth();
+  const { setIsLoggedIn } = useAuth();
+
   const navigator = useNavigation();
 
-  const handleLogin = async (email, password) => {
-    setLoading(true);
-    setError("");
+  const handleRegister = async (username, email, password) => {
     try {
-      // const { ok, data } = await loginRequest(email, password);
-      const ok = true;
+      const { ok, data } = await registerAndLogin(username, email, password);
       if (ok) {
         setIsLoggedIn(true);
       } else {
-        setError(data?.message ?? "Login failed. Please try again.");
+        // probably need to show some error on the screen.
       }
     } catch (err) {
-      setError("Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
+      // I dont know what kind of errors can occur here.
     }
   };
 
@@ -45,9 +38,14 @@ export function LoginScreen() {
         source={require("../../assets/logo.png")}
         style={{ height: 200, width: 200 }}
       />
-      <Text style={styles.tvLogin}>
-        Log in to use <Text style={styles.tvPockit}>Pockit</Text>
+      <Text style={styles.tvRegister}>
+        Register for <Text style={styles.tvPockit}>Pockit</Text>
       </Text>
+      <InputField
+        value={username}
+        setValue={setUsername}
+        placeholder={"Enter username"}
+      />
       <InputField
         value={email}
         setValue={setEmail}
@@ -61,27 +59,27 @@ export function LoginScreen() {
         icon={"lock-closed-outline"}
         secureTextEntry
       />
+
       <PrimaryButton
-        label="Log In"
-        loading={loading}
+        label="Register"
         onPress={() => {
-          handleLogin(email, password);
+          handleRegister(username, email, password);
         }}
       />
-      {error ? <Text style={styles.tvError}>{error}</Text> : null}
+
       <Text
         style={{
           marginTop: 0,
           fontFamily: "Poppins_400Regular",
         }}
       >
-        Don't have an account?{" "}
+        Already have an account?{" "}
         <Text
           style={{ color: "#ff9999", fontWeight: "bold" }}
-          onPress={() => navigator.replace("Register")}
+          onPress={() => navigator.replace("Login")}
         >
           {" "}
-          Register{" "}
+          Login{" "}
         </Text>
       </Text>
     </KeyboardAwareLayout>
@@ -89,7 +87,7 @@ export function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  tvLogin: {
+  tvRegister: {
     marginVertical: 15,
     fontFamily: "Poppins_600SemiBold",
     fontSize: 28,
@@ -97,11 +95,5 @@ const styles = StyleSheet.create({
   },
   tvPockit: {
     color: "#ff9999",
-  },
-  tvError: {
-    marginTop: 10,
-    color: "#E53935",
-    fontFamily: "Poppins_400Regular",
-    textAlign: "center",
   },
 });

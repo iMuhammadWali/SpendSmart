@@ -76,7 +76,7 @@ const HomeSreen = () => {
             alignItems: "center",
           }}
         >
-          <Text style={{ color: "#d75d69", fontFamily: "" }}>Remaining</Text>
+          <Text style={{ color: "#d75d69" }}>Remaining</Text>
           <Text
             style={{
               color: "#05ae40",

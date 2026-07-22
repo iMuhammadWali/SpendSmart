@@ -1,333 +1,346 @@
-import { useContext, useRef, useState } from "react";
+import { useState } from "react";
 import {
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
-  View,
   TextInput,
-  KeyboardAvoidingView,
-  ScrollView,
-  Platform,
   ToastAndroid,
-  Modal,
-  Button,
+  View,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 import Header from "../components/Header";
+import InputField from "../components/InputField";
+import KeyboardAwareLayout from "../components/KeyboardAwareLayout";
+import ConfirmationDialog from "../components/ConfirmationDialog";
+import ExpenseSummary from "../components/ExpenseSummary";
 import useExpenses from "../hooks/useExpenses";
 
-import ConfirmationDialog from "../components/ConfirmationDialog";
+const MEDIUMS = ["Manual", "Scan"];
+const CATEGORIES = [
+  "food",
+  "transport",
+  "health",
+  "cloth",
+  "education",
+  "utilities",
+  "rent",
+  "groceries",
+  "mobile/internet",
+  "grooming",
+  "gifts",
+  "donation",
+  "other",
+];
+
+function MediumToggle({ options, selectedIndex, onSelect }) {
+  return (
+    <View style={styles.vMediumToggle}>
+      {options.map((option, index) => (
+        <Pressable
+          key={index}
+          onPress={() => onSelect(index)}
+          style={[
+            styles.mediumOption,
+            selectedIndex === index
+              ? styles.mediumOptionActive
+              : styles.mediumOptionInactive,
+          ]}
+        >
+          <Text
+            style={[
+              styles.mediumOptionText,
+              selectedIndex === index
+                ? styles.mediumOptionTextActive
+                : styles.mediumOptionTextInactive,
+            ]}
+          >
+            {option}
+          </Text>
+        </Pressable>
+      ))}
+    </View>
+  );
+}
+
+function AmountInput({ amount, setAmount }) {
+  return (
+    <View style={styles.vFullWidth}>
+      <Text style={styles.tvCurrency}>PKR</Text>
+      <TextInput
+        style={styles.tiAmount}
+        value={amount}
+        placeholder="0"
+        placeholderTextColor={"#000"}
+        cursorColor={"#000"}
+        onChangeText={setAmount}
+        keyboardType="numeric"
+      />
+    </View>
+  );
+}
+
+function CategoryPicker({ categories, selectedCategory, onSelect }) {
+  return (
+    <View style={styles.vFullWidth}>
+      <Text style={styles.tvSectionLabel}>Category</Text>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.vCategoryList}
+        >
+          {categories.map((category, index) => (
+            <Pressable
+              key={index}
+              onPress={() => onSelect(index)}
+              style={[
+                styles.categoryPill,
+                selectedCategory === category
+                  ? styles.categoryActive
+                  : styles.categoryInactive,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.categoryText,
+                  selectedCategory === category
+                    ? styles.categoryTextActive
+                    : styles.categoryTextInactive,
+                ]}
+              >
+                {category}
+              </Text>
+            </Pressable>
+          ))}
+        </ScrollView>
+    </View>
+  );
+}
+
+function ManualEntryForm({
+  title,
+  setTitle,
+  description,
+  setDescription,
+  onSave,
+}) {
+  return (
+    <View style={styles.vFullWidth}>
+      <Text style={styles.tvFieldLabel}>Title</Text>
+      <InputField
+        value={title}
+        setValue={setTitle}
+        placeholder="Enter the title of your expense"
+        multiline
+      />
+
+      <Text style={styles.tvFieldLabel}>Description</Text>
+      <InputField
+        value={description}
+        setValue={setDescription}
+        placeholder="Enter the description of your expense"
+        multiline
+      />
+
+      <Pressable
+        style={({ pressed }) => [
+          styles.btnSave,
+          pressed && styles.btnSavePressed,
+        ]}
+        onPress={onSave}
+      >
+        <Text style={styles.tvSaveLabel}>Save Expense</Text>
+      </Pressable>
+    </View>
+  );
+}
+
+function validateExpense(title, amount) {
+  if (!title) {
+    ToastAndroid.show(
+      "You must enter the title to save an expense.",
+      ToastAndroid.SHORT,
+    );
+  }
+  if (!amount) {
+    ToastAndroid.show(
+      "You must enter the amount to save an expense.",
+      ToastAndroid.SHORT,
+    );
+  }
+  return Boolean(title) && Boolean(amount);
+}
 
 const AddEntryScreen = () => {
-  const options = ["Manual", "Scan"];
-  const categories = ["food", "transport", "health", "cloth", "other"];
-
   const [selectedMediumIndex, setSelectedMediumIndex] = useState(0);
   const [selectedCategoryIndex, setSelectedCategoryIndex] = useState(0);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const [expense, setExpense] = useState({});
-
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState(0);
 
   const { addExpense } = useExpenses();
 
+  const isManualEntry = MEDIUMS[selectedMediumIndex] === "Manual";
+  const selectedCategory = CATEGORIES[selectedCategoryIndex];
+
   const saveExpense = async (expense) => {
     await addExpense(expense);
     ToastAndroid.show("Expense Inserted", ToastAndroid.SHORT);
   };
 
+  const resetForm = () => {
+    setAmount(0);
+    setTitle("");
+    setDescription("");
+  };
+
+  const handleConfirmSave = () => {
+    saveExpense(expense);
+    resetForm();
+    setIsDialogOpen(false);
+  };
+
+  const handleSubmit = () => {
+    if (!validateExpense(title, amount)) return;
+
+    setExpense({ title, category: selectedCategory, amount, description });
+    setIsDialogOpen(true);
+  };
+
   return (
-    <SafeAreaView
-      style={{ flex: 1, backgroundColor: "#ffffff" }}
-      edges={["top"]}
+    <KeyboardAwareLayout
+      header={<Header headerTitle="Add New Entry" />}
+      contentContainerStyle={styles.vContentContainer}
     >
       <ConfirmationDialog
-        isDialogOpen={isDialogOpen}
-        expense={expense}
-        onCancel={() => {
-          setIsDialogOpen(false);
-        }}
-        onSave={() => {
-          saveExpense(expense);
-          setAmount(0);
-          setTitle("");
-          setDescription("");
-          setIsDialogOpen(false);
-        }}
+        isOpen={isDialogOpen}
+        title="Are you sure you want to save the following expense?"
+        body={<ExpenseSummary expense={expense} />}
+        confirmLabel="Save"
+        onCancel={() => setIsDialogOpen(false)}
+        onConfirm={handleConfirmSave}
       />
 
-      <Header headerTitle="Add New Entry" />
-      <KeyboardAvoidingView style={{ flex: 1, paddingHorizontal: 20 }} behavior="padding">
-        <ScrollView
-          contentContainerStyle={{ paddingBottom: 40 }}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
-        >
-          <View
-            style={{
-              flexDirection: "row",
-              height: 50,
-              gap: 30,
-              marginTop: 20,
-            }}
-          >
-            {options.map((option, index) => (
-              <Pressable
-                key={index}
-                onPress={() => {
-                  setSelectedMediumIndex(index);
-                }}
-                style={
-                  selectedMediumIndex === index
-                    ? {
-                        flex: 1,
-                        backgroundColor: "#ff9999",
-                        borderRadius: 10,
-                        justifyContent: "center",
-                        alignItems: "center",
-                        shadowColor: "#fb4a4a",
-                        shadowOffset: { width: 0, height: 4 },
-                        shadowOpacity: 0.3,
-                        shadowRadius: 8,
-                        elevation: 4,
-                      }
-                    : {
-                        flex: 1,
-                        backgroundColor: "#fff",
-                        borderRadius: 10,
-                        justifyContent: "center",
-                        alignItems: "center",
-                        shadowColor: "#d4d4d4",
-                        shadowOffset: { width: 0, height: 2 },
-                        shadowOpacity: 0.05,
-                        shadowRadius: 4,
-                        elevation: 2,
-                      }
-                }
-              >
-                <Text
-                  style={
-                    selectedMediumIndex === index
-                      ? { color: "#fff", fontFamily: "Poppins_600SemiBold" }
-                      : { color: "#595959", fontFamily: "Poppins_600SemiBold" }
-                  }
-                >
-                  {option}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
+      <MediumToggle
+        options={MEDIUMS}
+        selectedIndex={selectedMediumIndex}
+        onSelect={setSelectedMediumIndex}
+      />
 
-          {options[selectedMediumIndex] == "Manual" && (
-            <View>
-              <Text
-                style={{
-                  marginTop: 30,
-                  color: "#c0404a",
-                  fontFamily: "Poppins_500Medium",
-                  fontSize: 16,
-                  textAlign: "center",
-                }}
-              >
-                PKR
-              </Text>
+      {isManualEntry && <AmountInput amount={amount} setAmount={setAmount} />}
 
-              <TextInput
-                style={{
-                  borderRadius: 10,
-                  width: "100%",
-                  fontSize: 50,
-                  fontFamily: "Poppins_600SemiBold",
-                  color: "#000",
-                  textAlign: "center",
-                  paddingVertical: 0,
-                }}
-                value={amount}
-                placeholder="0"
-                placeholderTextColor={"#000"}
-                cursorColor={"#000"}
-                onChangeText={setAmount}
-                keyboardType="numeric"
-              />
-            </View>
-          )}
+      <CategoryPicker
+        categories={CATEGORIES}
+        selectedCategory={selectedCategory}
+        onSelect={setSelectedCategoryIndex}
+      />
 
-          {/* Selecting Categories */}
-          <Text
-            style={{
-              marginTop: 30,
-              color: "#000",
-              fontFamily: "Poppins_600SemiBold",
-              fontSize: 16,
-            }}
-          >
-            Category
-          </Text>
-          <View
-            style={{
-              flexDirection: "row",
-              flexWrap: "wrap",
-              width: "100%",
-              gap: 10,
-              marginTop: 10,
-            }}
-          >
-            {categories.map((category, index) => (
-              <Pressable
-                key={index}
-                onPress={() => setSelectedCategoryIndex(index)}
-                style={
-                  categories[selectedCategoryIndex] === category
-                    ? styles.categoryActive
-                    : styles.categoryInactive
-                }
-              >
-                <Text
-                  style={
-                    categories[selectedCategoryIndex] === category
-                      ? styles.categoryTextActive
-                      : styles.categoryTextInactive
-                  }
-                >
-                  {category}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
-
-          {options[selectedMediumIndex] == "Manual" ? (
-            <View>
-              <Text
-                style={{
-                  marginTop: 20,
-                  color: "#000",
-                  fontFamily: "Poppins_600SemiBold",
-                  fontSize: 16,
-                }}
-              >
-                Title
-              </Text>
-
-              <TextInput
-                multiline={true}
-                style={{
-                  borderRadius: 10,
-                  paddingHorizontal: 12,
-                  height: 50,
-                  width: "100%",
-                  marginTop: 10,
-                  backgroundColor: "#f7e3e5",
-                  elevation: 1,
-                  borderWidth: 0,
-                  color: "#c0404a",
-                }}
-                value={title}
-                placeholder="Enter the title of your expense"
-                placeholderTextColor={"#e8909a"}
-                cursorColor={"#ff6b7a"}
-                onChangeText={setTitle}
-              />
-
-              <Text
-                style={{
-                  marginTop: 20,
-                  color: "#000",
-                  fontFamily: "Poppins_600SemiBold",
-                  fontSize: 16,
-                }}
-              >
-                Description
-              </Text>
-              <TextInput
-                multiline={true}
-                style={{
-                  borderRadius: 10,
-                  paddingHorizontal: 12,
-                  // flex: 1,
-                  height: 50,
-                  width: "100%",
-                  marginTop: 10,
-                  backgroundColor: "#f7e3e5",
-                  elevation: 1,
-                  borderWidth: 0,
-                  color: "#c0404a",
-                }}
-                value={description}
-                placeholder="Enter the description of your expense"
-                placeholderTextColor={"#e8909a"}
-                cursorColor={"#ff6b7a"}
-                onChangeText={setDescription}
-              />
-              <Pressable
-                style={({ pressed }) => {
-                  return [
-                    {
-                      marginTop: 50,
-                      backgroundColor: "#ff9999",
-                      width: "100%",
-                      height: 50,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      borderRadius: 10,
-                    },
-                    pressed && { backgroundColor: "#ff7e7e" },
-                  ];
-                }}
-                onPress={() => {
-                  let isInvalid = !title || !amount;
-                  if (!title) {
-                    ToastAndroid.show(
-                      "You must enter the title to save an expense.",
-                      ToastAndroid.SHORT,
-                    );
-                  }
-                  if (!amount) {
-                    ToastAndroid.show(
-                      "You must enter the amount to save an expense.",
-                      ToastAndroid.SHORT,
-                    );
-                  }
-                  if (isInvalid) {
-                    return;
-                  }
-
-                  const category = categories[selectedCategoryIndex];
-                  setExpense({title, category, amount, description})
-                  setIsDialogOpen(true);
-                }}
-              >
-                <Text
-                  style={{
-                    color: "#fff",
-                    fontFamily: "Poppins_600SemiBold",
-                  }}
-                >
-                  Save Expense
-                </Text>
-              </Pressable>
-            </View>
-          ) : (
-            <Text style={{ marginTop: 30 }}>Camera feature Coming soon</Text>
-          )}
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+      {isManualEntry ? (
+        <ManualEntryForm
+          title={title}
+          setTitle={setTitle}
+          description={description}
+          setDescription={setDescription}
+          onSave={handleSubmit}
+        />
+      ) : (
+        <Text style={styles.tvComingSoon}>Camera feature Coming soon</Text>
+      )}
+    </KeyboardAwareLayout>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fdf7f0",
+  vContentContainer: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 40,
   },
-  categoryActive: {
+  vFullWidth: {
+    width: "100%",
+  },
+
+  // Medium toggle (Manual / Scan)
+  vMediumToggle: {
+    width: "100%",
+    flexDirection: "row",
+    height: 50,
+    gap: 30,
+  },
+  mediumOption: {
+    flex: 1,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    shadowOffset: { width: 0, height: 2 },
+  },
+  mediumOptionActive: {
+    backgroundColor: "#ff9999",
+    shadowColor: "#fb4a4a",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  mediumOptionInactive: {
+    backgroundColor: "#fff",
+    shadowColor: "#d4d4d4",
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  mediumOptionText: {
+    fontFamily: "Poppins_600SemiBold",
+  },
+  mediumOptionTextActive: {
+    color: "#fff",
+  },
+  mediumOptionTextInactive: {
+    color: "#595959",
+  },
+
+  // Amount input
+  tvCurrency: {
+    marginTop: 30,
+    color: "#c0404a",
+    fontFamily: "Poppins_500Medium",
+    fontSize: 16,
+    textAlign: "center",
+  },
+  tiAmount: {
+    borderRadius: 10,
+    width: "100%",
+    fontSize: 50,
+    fontFamily: "Poppins_600SemiBold",
+    color: "#000",
+    textAlign: "center",
+    paddingVertical: 0,
+  },
+
+  // Shared section label
+  tvSectionLabel: {
+    marginTop: 30,
+    color: "#000",
+    fontFamily: "Poppins_600SemiBold",
+    fontSize: 16,
+  },
+
+  // Category picker
+  vCategoryList: {
+    flexDirection: "row",
+    gap: 10,
+    paddingVertical: 10,
+  },
+  categoryPill: {
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 25,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  categoryActive: {
     backgroundColor: "#ff9999",
     shadowColor: "#ff9999",
     shadowOffset: { width: 0, height: 4 },
@@ -336,26 +349,48 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   categoryInactive: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 25,
     backgroundColor: "#fff",
     shadowColor: "#d4d4d4",
-    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 4,
     elevation: 3,
-    borderWidth: 0,
+  },
+  categoryText: {
+    fontFamily: "Poppins_500Medium",
+    fontSize: 10,
   },
   categoryTextActive: {
     color: "#fff",
-    fontFamily: "Poppins_500Medium",
-    fontSize: 10,
   },
   categoryTextInactive: {
     color: "#595959",
-    fontFamily: "Poppins_500Medium",
-    fontSize: 10,
+  },
+
+  // Manual entry form
+  tvFieldLabel: {
+    marginTop: 20,
+    color: "#000",
+    fontFamily: "Poppins_600SemiBold",
+    fontSize: 16,
+  },
+  btnSave: {
+    marginTop: 20,
+    backgroundColor: "#ff9999",
+    width: "100%",
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+  },
+  btnSavePressed: {
+    backgroundColor: "#ff7e7e",
+  },
+  tvSaveLabel: {
+    color: "#fff",
+    fontFamily: "Poppins_600SemiBold",
+  },
+  tvComingSoon: {
+    marginTop: 30,
   },
 });
 

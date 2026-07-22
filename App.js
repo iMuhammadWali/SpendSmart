@@ -19,7 +19,7 @@ import AIScreen from "./src/screens/AIScreen";
 import HistoryScreen from "./src/screens/HistoryScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
 import { ExpenseProvider } from "./src/context/ExpenseContext";
-import { SignupScreen } from "./src/screens/SignupScreen";
+import { RegisterScreen } from "./src/screens/RegisterScreen";
 import { AuthProvider } from "./src/context/AuthContext";
 import useAuth from "./src/hooks/useAuth";
 
@@ -99,7 +99,7 @@ const AuthStack = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Signup" component={SignupScreen} />
+      <Stack.Screen name="Register" component={RegisterScreen} />
     </Stack.Navigator>
   );
 };

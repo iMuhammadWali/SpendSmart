@@ -12,8 +12,8 @@ export function useAiChat() {
     // Now send the message.
     setIsLoading(true);
     try {
-      const reply = await sendMessageAndGetReply(history, prompt);
       setHistory((prev) => [...prev, { role: "user", content: prompt }]);
+      const reply = await sendMessageAndGetReply(history, prompt);
       setHistory((prev) => [...prev, { role: "assistant", content: reply }]);
     } catch (err) {
       console.log(err); // Remove this when converting to APK, but keep it for debugging in development.
