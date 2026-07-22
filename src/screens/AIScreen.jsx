@@ -1,12 +1,10 @@
-import { use, useEffect, useReducer, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   StyleSheet,
-  Button,
   Pressable,
   TextInput,
   View,
   Text,
-  Platform,
   ActivityIndicator,
   ScrollView,
 } from "react-native";
@@ -19,9 +17,6 @@ import * as Clipboard from "expo-clipboard";
 import { Ionicons } from "@expo/vector-icons";
 import Markdown from "react-native-markdown-display";
 import Header from "../components/Header";
-
-// services.
-import { sendMessage } from "../services/aiService";
 
 // custom hooks
 import { useAiChat } from "../hooks/useAiChat";
@@ -45,113 +40,33 @@ const AIScreen = () => {
   };
 
   return (
-    <SafeAreaView
-      style={{ flex: 1, backgroundColor: "#fdf7f0" }}
-      edges={["top"]}
-    >
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
-        <Header headerTitle={"Analytics"} />
-
+    <SafeAreaView style={styles.vSafeArea} edges={["top"]}>
+      <Header headerTitle={"Analytics"} />
+      <KeyboardAvoidingView style={styles.vKeyboardAvoiding} behavior="padding">
         <ScrollView
           ref={scrollViewRef}
-          contentContainerStyle={{
-            width: "100%",
-            padding: 13,
-            marginBottom: 10,
-          }}
+          contentContainerStyle={styles.vMessageList}
         >
           {history.map((message, index) => (
             <View
               key={index}
               style={[
-                {
-                  minHeight: 50,
-                  borderRadius: 10,
-                  elevation: 5,
-                  padding: 10,
-                  marginBottom: 10,
-                },
+                styles.vMessageBubble,
                 message.role === "assistant"
-                  ? {
-                      marginRight: 30,
-                      backgroundColor: "#e6e3ea",
-                      marginBottom: 20,
-                    }
-                  : { marginLeft: 30, backgroundColor: "#f7bcc2" },
+                  ? styles.vMessageBubbleAssistant
+                  : styles.vMessageBubbleUser,
               ]}
             >
               {message.role === "assistant" ? (
-                <Markdown
-                  style={{
-                    body: {
-                      color: "#4a4458",
-                      fontSize: 14,
-                      fontFamily: "Poppins_400Regular",
-                    },
-                    heading1: {
-                      fontSize: 19,
-                      fontFamily: "Poppins_600SemiBold",
-                    },
-                    heading2: {
-                      fontSize: 18,
-                      fontFamily: "Poppins_600SemiBold",
-                    },
-                    heading3: {
-                      fontSize: 17,
-                      fontFamily: "Poppins_600SemiBold",
-                    },
-                    heading4: {
-                      fontSize: 16,
-                      fontFamily: "Poppins_600SemiBold",
-                    },
-                    heading5: { fontSize: 15, fontFamily: "Poppins_500Medium" },
-                    heading6: { fontSize: 14, fontFamily: "Popping_500Medium" },
-                    strong: {
-                      fontFamily: "Poppins_600SemiBold",
-                      color: "#4a4458",
-                    },
-                    bullet_list_icon: { color: "#d75d69" },
-                    code_inline: {
-                      backgroundColor: "#d9d4e0",
-                      color: "#4a4458",
-                      borderRadius: 4,
-                      paddingHorizontal: 4,
-                    },
-                    fence: {
-                      backgroundColor: "#d9d4e0",
-                      borderRadius: 8,
-                      padding: 10,
-                    },
-                    code_block: {
-                      color: "#4a4458",
-                      fontFamily: "Poppins_400Regular",
-                    },
-                  }}
-                >
-                  {message.content}
-                </Markdown>
+                <Markdown style={markdownStyles}>{message.content}</Markdown>
               ) : (
-                <Text
-                  style={{
-                    color: "#7a2a35",
-                    fontFamily: "Poppins_400Regular",
-                    fontSize: 14,
-                  }}
-                >
-                  {message.content}
-                </Text>
+                <Text style={styles.tvUserMessage}>{message.content}</Text>
               )}
 
               {message.role === "assistant" && (
                 <Pressable
                   onPress={() => handleCopy(message.content, index)}
-                  style={{
-                    alignSelf: "flex-end",
-                    marginTop: 6,
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: 4,
-                  }}
+                  style={styles.btnCopy}
                 >
                   <Ionicons
                     name={
@@ -163,11 +78,10 @@ const AIScreen = () => {
                     color={copiedIndex === index ? "#2A9D6E" : "#9B9488"}
                   />
                   <Text
-                    style={{
-                      fontSize: 11,
-                      fontFamily: "Poppins_400Regular",
-                      color: copiedIndex === index ? "#2A9D6E" : "#9B9488",
-                    }}
+                    style={[
+                      styles.tvCopyLabel,
+                      copiedIndex === index && styles.tvCopyLabelCopied,
+                    ]}
                   >
                     {copiedIndex === index ? "Copied" : "Copy"}
                   </Text>
@@ -176,34 +90,17 @@ const AIScreen = () => {
             </View>
           ))}
           {isLoading ? (
-            <View
-              style={{
-                borderWidth: 0,
-                minHeight: 10,
-                borderRadius: 10,
-                marginBottom: 10,
-              }}
-            >
-              <Text style={{ color: "#c9a0a8" }}>Muffin is thinking...</Text>
+            <View style={styles.vThinking}>
+              <Text style={styles.tvThinking}>Muffin is thinking...</Text>
             </View>
           ) : null}
         </ScrollView>
 
         {/* This it the text sending option */}
-        <View
-          style={{ flexDirection: "row", width: "100%", padding: 10, gap: 5 }}
-        >
+        <View style={styles.vInputRow}>
           <TextInput
             multiline={true}
-            style={{
-              borderRadius: 10,
-              paddingHorizontal: 12,
-              flex: 1,
-              backgroundColor: "#f7e3e5",
-              elevation: 1,
-              borderWidth: 0,
-              color: "#c0404a",
-            }}
+            style={styles.tiPrompt}
             value={prompt}
             placeholder="What's on your mind financially?"
             placeholderTextColor={"#e8909a"}
@@ -218,16 +115,10 @@ const AIScreen = () => {
           />
 
           <Pressable
-            style={({ pressed }) => ({
-              width: 48,
-              height: 48,
-              borderRadius: 24,
-              backgroundColor: pressed ? "#e07080" : "#ff8090",
-              justifyContent: "center",
-              alignItems: "center",
-              elevation: 3,
-              alignSelf: "flex-end",
-            })}
+            style={({ pressed }) => [
+              styles.btnSend,
+              pressed && styles.btnSendPressed,
+            ]}
             onPress={() => {
               send(prompt);
               setPrompt("");
@@ -236,15 +127,152 @@ const AIScreen = () => {
             {isLoading ? (
               <ActivityIndicator size={20} color={"#fff"} />
             ) : (
-              <Text style={{ color: "#fff", marginTop: -5, fontSize: 20 }}>
-                {">"}
-              </Text>
+              <Text style={styles.tvSendArrow}>{">"}</Text>
             )}
           </Pressable>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
+};
+
+const styles = StyleSheet.create({
+  vSafeArea: {
+    flex: 1,
+    backgroundColor: "#fdf7f0",
+  },
+  vKeyboardAvoiding: {
+    flex: 1,
+  },
+  vMessageList: {
+    width: "100%",
+    padding: 13,
+    marginBottom: 10,
+  },
+  vMessageBubble: {
+    minHeight: 50,
+    borderRadius: 10,
+    elevation: 5,
+    padding: 10,
+    marginBottom: 10,
+  },
+  vMessageBubbleAssistant: {
+    marginRight: 30,
+    backgroundColor: "#e6e3ea",
+    marginBottom: 20,
+  },
+  vMessageBubbleUser: {
+    marginLeft: 30,
+    backgroundColor: "#f7bcc2",
+  },
+  tvUserMessage: {
+    color: "#7a2a35",
+    fontFamily: "Poppins_400Regular",
+    fontSize: 14,
+  },
+  btnCopy: {
+    alignSelf: "flex-end",
+    marginTop: 6,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  tvCopyLabel: {
+    fontSize: 11,
+    fontFamily: "Poppins_400Regular",
+    color: "#9B9488",
+  },
+  tvCopyLabelCopied: {
+    color: "#2A9D6E",
+  },
+  vThinking: {
+    borderWidth: 0,
+    minHeight: 10,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  tvThinking: {
+    color: "#c9a0a8",
+  },
+  vInputRow: {
+    flexDirection: "row",
+    width: "100%",
+    padding: 10,
+    gap: 5,
+  },
+  tiPrompt: {
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    flex: 1,
+    backgroundColor: "#f7e3e5",
+    elevation: 1,
+    borderWidth: 0,
+    color: "#c0404a",
+  },
+  btnSend: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "#ff8090",
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 3,
+    alignSelf: "flex-end",
+  },
+  btnSendPressed: {
+    backgroundColor: "#e07080",
+  },
+  tvSendArrow: {
+    color: "#fff",
+    marginTop: -5,
+    fontSize: 20,
+  },
+});
+
+const markdownStyles = {
+  body: {
+    color: "#4a4458",
+    fontSize: 14,
+    fontFamily: "Poppins_400Regular",
+  },
+  heading1: {
+    fontSize: 19,
+    fontFamily: "Poppins_600SemiBold",
+  },
+  heading2: {
+    fontSize: 18,
+    fontFamily: "Poppins_600SemiBold",
+  },
+  heading3: {
+    fontSize: 17,
+    fontFamily: "Poppins_600SemiBold",
+  },
+  heading4: {
+    fontSize: 16,
+    fontFamily: "Poppins_600SemiBold",
+  },
+  heading5: { fontSize: 15, fontFamily: "Poppins_500Medium" },
+  heading6: { fontSize: 14, fontFamily: "Popping_500Medium" },
+  strong: {
+    fontFamily: "Poppins_600SemiBold",
+    color: "#4a4458",
+  },
+  bullet_list_icon: { color: "#d75d69" },
+  code_inline: {
+    backgroundColor: "#d9d4e0",
+    color: "#4a4458",
+    borderRadius: 4,
+    paddingHorizontal: 4,
+  },
+  fence: {
+    backgroundColor: "#d9d4e0",
+    borderRadius: 8,
+    padding: 10,
+  },
+  code_block: {
+    color: "#4a4458",
+    fontFamily: "Poppins_400Regular",
+  },
 };
 
 export default AIScreen;
