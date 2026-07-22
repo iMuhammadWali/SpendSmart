@@ -2,16 +2,10 @@
 import { useCallback, useState } from "react";
 import {
   Image,
-  KeyboardAvoidingView,
-  ScrollView,
   StyleSheet,
   Text,
-  TextInput,
-  Platform,
-  View,
 } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { SafeAreaView } from "react-native-safe-area-context";
+import KeyboardAwareLayout from "../components/KeyboardAwareLayout";
 import InputField from "../components/InputField";
 import { useNavigation } from "@react-navigation/native";
 import PrimaryButton from "../components/PrimaryButton";
@@ -45,75 +39,55 @@ export function LoginScreen() {
   };
 
   return (
-    <SafeAreaView
-      style={{ flex: 1, backgroundColor: "#ffffff" }}
-      edges={["top"]}
-    >
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "padding"}
-        style={{ flex: 1, backgroundColor: "#fdf7f0" }}
+    <KeyboardAwareLayout>
+      <Image
+        source={require("../../assets/logo.png")}
+        style={{ height: 200, width: 200 }}
+      />
+      <Text style={styles.tvLogin}>
+        Log in to use <Text style={styles.tvPockit}>Pockit</Text>
+      </Text>
+      <InputField
+        value={email}
+        setValue={setEmail}
+        placeholder={"Enter your email"}
+        icon={"mail-outline"}
+      />
+      <InputField
+        value={password}
+        setValue={setPassword}
+        placeholder={"Enter your password"}
+        icon={"lock-closed-outline"}
+        secureTextEntry
+      />
+      <PrimaryButton
+        label="Log In"
+        loading={loading}
+        onPress={() => {
+          handleLogin(email, password);
+        }}
+      />
+      {error ? <Text style={styles.tvError}>{error}</Text> : null}
+      <Text
+        style={{
+          marginTop: 0,
+          fontFamily: "Poppins_400Regular",
+        }}
       >
-        <ScrollView>
-          <View style={styles.vContentContainer}>
-            <Image
-              source={require("../../assets/logo.png")}
-              style={{ height: 200, width: 200 }}
-            />
-            <Text style={styles.tvLogin}>
-              Log in to use <Text style={styles.tvPockit}>Pockit</Text>
-            </Text>
-            <InputField
-              value={email}
-              setValue={setEmail}
-              placeholder={"Enter your email"}
-              icon={"mail-outline"}
-            />
-            <InputField
-              value={password}
-              setValue={setPassword}
-              placeholder={"Enter your password"}
-              icon={"lock-closed-outline"}
-              secureTextEntry
-            />
-            <PrimaryButton
-              label="Log In"
-              loading={loading}
-              onPress={() => {
-                handleLogin(email, password);
-              }}
-            />
-            {error ? (
-              <Text style={styles.tvError}>{error}</Text>
-            ) : null}
-            <Text
-              style={{
-                marginTop: 0,
-                fontFamily: "Poppins_400Regular",
-              }}
-            >
-              Don't have an account?{" "}
-              <Text
-                style={{ color: "#ff9999", fontWeight: "bold" }}
-                onPress={() => navigator.replace("Register")}
-              >
-                {" "}
-                Register{" "}
-              </Text>
-            </Text>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+        Don't have an account?{" "}
+        <Text
+          style={{ color: "#ff9999", fontWeight: "bold" }}
+          onPress={() => navigator.replace("Register")}
+        >
+          {" "}
+          Register{" "}
+        </Text>
+      </Text>
+    </KeyboardAwareLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  vContentContainer: {
-    backgroundColor: "#fdf7f0",
-    paddingHorizontal: 20,
-    alignItems: "center",
-    marginTop: "20%",
-  },
   tvLogin: {
     marginVertical: 15,
     fontFamily: "Poppins_600SemiBold",
