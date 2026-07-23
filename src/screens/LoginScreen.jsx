@@ -1,5 +1,4 @@
-// TODO: Add symbols on Email and password placeholders.
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import {
   Image,
   StyleSheet,
@@ -7,26 +6,32 @@ import {
 } from "react-native";
 import KeyboardAwareLayout from "../components/KeyboardAwareLayout";
 import InputField from "../components/InputField";
+import ErrorBanner from "../components/ErrorBanner";
 import { useNavigation } from "@react-navigation/native";
 import PrimaryButton from "../components/PrimaryButton";
 import useAuth from "../hooks/useAuth";
 import { loginRequest } from "../api/auth";
+import { getCredentialError } from "../utils/validation";
 
-// I need to make a context of this logged in thingy.
 export function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const { isLoggedIn, setIsLoggedIn } = useAuth();
+  const { setIsLoggedIn } = useAuth();
   const navigator = useNavigation();
 
-  const handleLogin = async (email, password) => {
+  const handleLogin = async () => {
+    const validationError = getCredentialError(email, password);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     setLoading(true);
     setError("");
     try {
-      // const { ok, data } = await loginRequest(email, password);
-      const ok = true;
+      const { ok, data } = await loginRequest(email.trim(), password);
       if (ok) {
         setIsLoggedIn(true);
       } else {
@@ -43,7 +48,7 @@ export function LoginScreen() {
     <KeyboardAwareLayout>
       <Image
         source={require("../../assets/logo.png")}
-        style={{ height: 200, width: 200 }}
+        style={styles.imgLogo}
       />
       <Text style={styles.tvLogin}>
         Log in to use <Text style={styles.tvPockit}>Pockit</Text>
@@ -61,27 +66,19 @@ export function LoginScreen() {
         icon={"lock-closed-outline"}
         secureTextEntry
       />
+      <ErrorBanner message={error} />
       <PrimaryButton
         label="Log In"
         loading={loading}
-        onPress={() => {
-          handleLogin(email, password);
-        }}
+        onPress={handleLogin}
       />
-      {error ? <Text style={styles.tvError}>{error}</Text> : null}
-      <Text
-        style={{
-          marginTop: 0,
-          fontFamily: "Poppins_400Regular",
-        }}
-      >
+      <Text style={styles.tvFooter}>
         Don't have an account?{" "}
         <Text
-          style={{ color: "#ff9999", fontWeight: "bold" }}
+          style={styles.tvFooterLink}
           onPress={() => navigator.replace("Register")}
         >
-          {" "}
-          Register{" "}
+          Register
         </Text>
       </Text>
     </KeyboardAwareLayout>
@@ -89,6 +86,10 @@ export function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
+  imgLogo: {
+    height: 200,
+    width: 200,
+  },
   tvLogin: {
     marginVertical: 15,
     fontFamily: "Poppins_600SemiBold",
@@ -98,10 +99,12 @@ const styles = StyleSheet.create({
   tvPockit: {
     color: "#ff9999",
   },
-  tvError: {
-    marginTop: 10,
-    color: "#E53935",
+  tvFooter: {
+    marginTop: 0,
     fontFamily: "Poppins_400Regular",
-    textAlign: "center",
+  },
+  tvFooterLink: {
+    color: "#ff9999",
+    fontWeight: "bold",
   },
 });
