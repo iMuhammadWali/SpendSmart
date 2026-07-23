@@ -45,6 +45,7 @@ export function RegisterScreen() {
         value={username}
         setValue={setUsername}
         placeholder={"Enter username"}
+        icon={"person-outline"}
       />
       <InputField
         value={email}
