@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import {
   Image,
   StyleSheet,
@@ -6,24 +6,32 @@ import {
 } from "react-native";
 import KeyboardAwareLayout from "../components/KeyboardAwareLayout";
 import InputField from "../components/InputField";
+import ErrorBanner from "../components/ErrorBanner";
 import { useNavigation } from "@react-navigation/native";
 import PrimaryButton from "../components/PrimaryButton";
 import useAuth from "../hooks/useAuth";
 import { loginRequest } from "../api/auth";
+import { getCredentialError } from "../utils/validation";
 
 export function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const { isLoggedIn, setIsLoggedIn } = useAuth();
+  const { setIsLoggedIn } = useAuth();
   const navigator = useNavigation();
 
   const handleLogin = async () => {
+    const validationError = getCredentialError(email, password);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     setLoading(true);
     setError("");
     try {
-      const { ok, data } = await loginRequest(email, password);
+      const { ok, data } = await loginRequest(email.trim(), password);
       if (ok) {
         setIsLoggedIn(true);
       } else {
@@ -58,12 +66,12 @@ export function LoginScreen() {
         icon={"lock-closed-outline"}
         secureTextEntry
       />
+      <ErrorBanner message={error} />
       <PrimaryButton
         label="Log In"
         loading={loading}
         onPress={handleLogin}
       />
-      {error ? <Text style={styles.tvError}>{error}</Text> : null}
       <Text style={styles.tvFooter}>
         Don't have an account?{" "}
         <Text
@@ -90,12 +98,6 @@ const styles = StyleSheet.create({
   },
   tvPockit: {
     color: "#ff9999",
-  },
-  tvError: {
-    marginTop: 10,
-    color: "#E53935",
-    fontFamily: "Poppins_400Regular",
-    textAlign: "center",
   },
   tvFooter: {
     marginTop: 0,
